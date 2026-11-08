@@ -333,3 +333,102 @@ La comparación con la segunda operación queda **pendiente para el 23 de noviem
 ## 8. Cómo reproducir las pruebas y mediciones
 
 **En desarrollo para el Laboratorio 4 (18 de noviembre).** Aquí documentaremos los comandos para preparar el entorno, ejecutar las pruebas, generar los datos sintéticos y producir las gráficas.
+
+
+## Parte 2 — Implementar y verificar
+
+En esta parte del laboratorio comenzamos a desarrollar los algoritmos para resolver el problema del tope tarifario del SITVM. Para esto utilizamos Python y organizamos los archivos dentro de la carpeta `src/tope_tarifario/`.
+
+La idea es encontrar cuánto debería pagar realmente una persona por sus viajes y comparar diferentes formas de resolver el problema para comprobar cuál nos da el resultado correcto.
+
+### 2.1. Implementación de `estrategia.py` — Programación dinámica
+
+En este archivo desarrollamos el algoritmo principal utilizando programación dinámica, que es la estrategia que escogimos para solucionar el problema del tope tarifario.
+
+Lo que buscamos es encontrar la combinación más económica de pasajes y pases para cubrir todos los viajes que hizo una persona durante el mes.
+
+El programa recibe una lista donde cada número representa la cantidad de viajes realizados en un día. Con esa información compara las tarifas disponibles:
+
+- Pasaje sencillo: $3.900 por viaje.
+- Pase diario: $9.500.
+- Pase semanal: $36.000 por siete días consecutivos.
+- Pase mensual: $135.000 por treinta días consecutivos.
+
+Para resolverlo utilizamos una tabla que se va llenando desde el último día hasta el primero. En ella guardamos el menor costo que encontramos para los días que faltan.
+
+Esto nos permite aprovechar los resultados que ya calculamos y no tener que repetir el mismo procedimiento varias veces.
+
+**Funciones que utilizamos:**
+
+- `costo_minimo()`: encuentra el costo más bajo para cubrir todos los viajes.
+- `liquidar_tope()`: calcula cuánto dinero se le debe devolver al usuario si pagó más de lo necesario.
+- `compras_optimas()`: nos permite identificar los productos que forman la combinación más económica.
+- `contar_operaciones()`: nos ayuda a contar las operaciones realizadas para después comparar el rendimiento.
+
+**Ejemplo:**
+
+```python
+viajes_por_dia = [1, 3, 3, 3, 3, 0, 0, 3]
+```
+
+Con esta lista trabajamos el mismo ejemplo de ocho días que resolvimos a mano en la Parte 1.
+
+El programa encuentra que podemos pagar el primer día con un pasaje sencillo y comprar un pase semanal desde el segundo día, que cubre los viajes hasta el día 8.
+
+| Producto | Días que cubre | Costo |
+|---|---|---:|
+| Pasaje sencillo | Día 1 | $3.900 |
+| Pase semanal | Días 2 al 8 | $36.000 |
+| **Total** | | **$39.900** |
+
+De esta manera obtenemos un costo mínimo de **$39.900**.
+
+Con este algoritmo podemos encontrar el resultado correcto sin tener que revisar una y otra vez las mismas combinaciones, lo que nos ayuda a reducir la cantidad de cálculos.
+
+### 2.2. Implementación de `exhaustivo.py` — Búsqueda exhaustiva
+
+En este archivo desarrollamos otro algoritmo para comprobar que la solución de programación dinámica está funcionando correctamente.
+
+En este caso utilizamos búsqueda exhaustiva, que consiste en probar las diferentes combinaciones posibles de pasajes y pases hasta encontrar la más económica.
+
+A diferencia del algoritmo anterior, aquí no guardamos los resultados que ya calculamos. Por eso, algunas operaciones se pueden repetir varias veces.
+
+El procedimiento que seguimos es el siguiente:
+
+1. Revisamos cuántos viajes hay en el día actual.
+2. Calculamos cuánto costaría pagar ese día con pasajes sencillos o con un pase diario.
+3. También revisamos cuánto costaría utilizar un pase semanal o mensual.
+4. Continuamos con los días que todavía no están cubiertos.
+5. Finalmente, comparamos las posibilidades y escogemos la que tenga el menor costo.
+
+Para hacer esto utilizamos recursividad, es decir, una función que vuelve a llamarse para resolver los días que faltan.
+
+**Funciones que utilizamos:**
+
+- `costo_exhaustivo()`: prueba las combinaciones y devuelve el costo más bajo.
+- `contar_operaciones()`: permite contar las operaciones realizadas durante el proceso.
+
+**Comprobación con nuestro ejemplo:**
+
+Utilizamos la misma lista de viajes:
+
+```python
+viajes_por_dia = [1, 3, 3, 3, 3, 0, 0, 3]
+```
+
+Al comparar los dos algoritmos obtuvimos los siguientes resultados:
+
+| Algoritmo | Resultado |
+|---|---:|
+| Programación dinámica | $39.900 |
+| Búsqueda exhaustiva | $39.900 |
+
+Como podemos observar, los dos algoritmos encuentran el mismo costo mínimo. Esto nos permite comprobar que la programación dinámica está dando el resultado correcto para este ejemplo.
+
+Sin embargo, también encontramos una diferencia importante entre las dos estrategias.
+
+La búsqueda exhaustiva tiene que revisar muchas combinaciones y, cuando aumentamos la cantidad de días, también aumenta bastante el trabajo que debe realizar.
+
+Por eso, siguiendo las indicaciones del profesor, utilizamos este algoritmo solamente con ejemplos pequeños.
+
+En nuestro proyecto, la búsqueda exhaustiva nos sirve principalmente para comprobar los resultados de la programación dinámica y no como la solución que recomendaríamos para procesar todas las tarjetas del SITVM.
