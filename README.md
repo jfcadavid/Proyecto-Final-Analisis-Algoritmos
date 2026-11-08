@@ -21,13 +21,13 @@
 
 Nos correspondió estudiar el Sistema Integrado de Transporte del Valle Metropolitano (SITVM), que maneja el metro, dos líneas de cable y buses alimentadores. Los usuarios pagan sus viajes con tarjetas sin contacto. Cada noche se procesan las validaciones para detectar registros repetidos, organizarlos, analizar congestiones y calcular los cobros.
 
-El problema general es que este proceso tarda **más de 8 horas**, aunque las operaciones nocturnas deben ajustarse a una ventana de **4 horas (00:00 a 04:00)**. Para el Laboratorio 4 nos corresponde trabajar específicamente en la **operación 4: liquidación del tope tarifario**. El análisis completo del proceso y la segunda operación se completarán para el proyecto final.
+El problema general es que el proceso tarda **más de 8 horas**. Las operaciones 1 y 2 deben ejecutarse dentro de una ventana de **4 horas (00:00 a 04:00)** cada noche, y la operación 4 comparte esa ventana en la noche de cierre de mes. Para el Laboratorio 4 nos corresponde trabajar específicamente en la **operación 4: liquidación del tope tarifario**. El análisis completo del proceso y la segunda operación se completarán para el proyecto final.
 
 ### 1.2. ¿Qué debemos resolver en la operación 4?
 
 Al finalizar cada mes, el sistema debe revisar los viajes de cada tarjeta personalizada y calcular cuál habría sido la combinación **más barata** de pasajes y pases que cubriera todos esos viajes. Si a una persona le cobraron más de ese valor, se le debe devolver la diferencia como saldo de su tarjeta.
 
-No basta con escoger lo más barato de cada día por separado, porque un pase semanal o mensual puede cubrir varios días a la vez. Nuestra tarea es encontrar el **costo mínimo exacto** usando programación dinámica.
+Actualmente, el programa intenta revisar todas las combinaciones posibles de pases, pero ese procedimiento no termina en un tiempo útil para las tarjetas que tienen viajes durante muchos días. En esos casos se usa una regla simplificada que combina el cobro diario con pases semanales y mensuales. Esta regla puede cobrar más del mínimo. Por eso, nuestra tarea es encontrar el **costo mínimo exacto** usando programación dinámica.
 
 ### 1.3. Entradas y unidades
 
@@ -69,14 +69,16 @@ Se usa `max(0, ...)` porque la devolución nunca puede ser negativa.
 - La lista original de viajes no se debe modificar durante el cálculo; el caso exige conservar los datos originales de validaciones para garantizar la trazabilidad.
 - Los pases cubren días **consecutivos**: 1, 7 o 30 según el producto.
 - En un mes de cierre, la operación 4 comparte la ventana nocturna de cuatro horas con las operaciones 1 y 2.
-- El sistema procesa aproximadamente **950.000 tarjetas utilizadas al menos una vez al mes**.
+- De las **3.200.000 tarjetas emitidas**, cerca de **950.000 se utilizan al menos una vez al mes**. La operación 4 debe considerar ese volumen mensual de tarjetas.
 - El servidor dedicado consume aproximadamente **500 W bajo carga sostenida** y no se cuenta con procesamiento en paralelo.
+
+Como datos del proceso completo, el cliente también informa **1.400.000 validaciones en un día hábil típico**, de las cuales entre **4 % y 9 %** pueden llegar repetidas por reenvíos de lotes. Estos datos son importantes para el contexto, pero no son entradas directas de nuestra función de programación dinámica.
 
 La deduplicación pertenece a la operación 1 del proceso. Para este cálculo partimos de la lista de viajes válidos de una tarjeta, como establece la entrada del Laboratorio 4.
 
 ### 1.6. Supuestos que usaremos
 
-Para que los tres programemos bajo las mismas reglas, acordamos trabajar con estas interpretaciones, que debemos mantener en el código y en las pruebas:
+Para que los tres programemos bajo las mismas reglas, **proponemos** estas interpretaciones. Debemos revisarlas y acordarlas entre los integrantes antes de implementarlas en el código y en las pruebas:
 
 - La lista está organizada cronológicamente y puede tener **28, 29, 30 o 31 días** en un mes real.
 - La cantidad de viajes por día es un entero no negativo.
@@ -234,7 +236,7 @@ En este escenario hipotético se deberían devolver **$22.500**. No estamos afir
 
 El caso dice que hoy se escoge lo más barato entre pasajes sencillos y pase diario, y luego se aplican pases semanales o mensuales si la suma supera su precio. **No explica exactamente cómo se elige el día de inicio de esos pases**.
 
-Para poder probar esa idea en nuestro trabajo, vamos a utilizar esta interpretación concreta:
+Para poder probar esa idea en nuestro trabajo, **proponemos** esta interpretación concreta, pendiente de validación por los tres integrantes:
 
 1. Empezamos en el primer día con viajes pendientes.
 2. Calculamos cuánto costaría pagar cada día por separado, escogiendo el menor valor entre viajes sencillos y pase diario.
@@ -331,4 +333,3 @@ La comparación con la segunda operación queda **pendiente para el 23 de noviem
 ## 8. Cómo reproducir las pruebas y mediciones
 
 **En desarrollo para el Laboratorio 4 (18 de noviembre).** Aquí documentaremos los comandos para preparar el entorno, ejecutar las pruebas, generar los datos sintéticos y producir las gráficas.
-
