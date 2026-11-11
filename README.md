@@ -432,3 +432,120 @@ La búsqueda exhaustiva tiene que revisar muchas combinaciones y, cuando aumenta
 Por eso, siguiendo las indicaciones del profesor, utilizamos este algoritmo solamente con ejemplos pequeños.
 
 En nuestro proyecto, la búsqueda exhaustiva nos sirve principalmente para comprobar los resultados de la programación dinámica y no como la solución que recomendaríamos para procesar todas las tarjetas del SITVM.
+
+### 2.3. Implementación de regla_actual.py — Regla simplificada
+
+En este archivo implementamos la regla simplificada que utiliza el SITVM para calcular cuánto debe pagar una persona por sus viajes.
+
+Según el caso que nos entregó el profesor, el sistema actual intenta revisar todas las combinaciones de pases, pero cuando una tarjeta tiene muchos días con viajes, este proceso tarda demasiado. Por eso, el sistema utiliza una regla simplificada que no siempre encuentra el costo más económico.
+
+Como el enunciado no explica exactamente cómo decide cuándo comenzar un pase semanal o mensual, utilizamos la interpretación que dejamos definida en la Parte 1 del README.
+
+*¿Cómo funciona?*
+
+El algoritmo sigue estos pasos:
+
+1. Primero calcula cuánto costaría pagar cada día utilizando pasajes sencillos o un pase diario, escogiendo la opción más económica.
+2. Después revisa si los costos de los próximos 30 días superan los $135.000 del pase mensual.
+3. Si no se cumple esa condición, revisa si los costos de los próximos siete días superan los $36.000 del pase semanal.
+4. Cuando encuentra que alguno de estos pases resulta más económico, lo compra y avanza hasta el primer día que no está cubierto.
+5. Si ninguno de los pases resulta conveniente, paga solamente el día actual.
+6. Repite el procedimiento hasta terminar todos los días.
+
+*Funciones que utilizamos:*
+
+- costo_regla_actual(): calcula cuánto cobraría el sistema utilizando esta regla simplificada.
+- contar_operaciones(): cuenta las revisiones y operaciones que realiza el algoritmo para después comparar su rendimiento.
+- _resolver(): es una función auxiliar que realiza los cálculos de la regla y permite obtener tanto el costo como el número de operaciones.
+
+*Ejemplo:*
+
+Utilizamos la misma lista de viajes de la Parte 1:
+
+python
+viajes_por_dia = [1, 3, 3, 3, 3, 0, 0, 3]
+
+
+Al aplicar nuestra interpretación de la regla simplificada, el programa decide comprar un pase semanal desde el primer día porque el costo individual de los primeros siete días supera los $36.000.
+
+Sin embargo, ese pase solamente cubre hasta el día 7 y todavía debemos pagar los viajes del día 8.
+
+| Producto | Días que cubre | Costo |
+|---|---|---:|
+| Pase semanal | Días 1 al 7 | $36.000 |
+| Pase diario | Día 8 | $9.500 |
+| *Total* | | *$45.500* |
+
+Cuando comparamos este resultado con la programación dinámica, encontramos lo siguiente:
+
+| Algoritmo | Costo |
+|---|---:|
+| Regla simplificada | $45.500 |
+| Programación dinámica | $39.900 |
+| *Diferencia* | *$5.600* |
+
+Esto nos permite ver que escoger un pase porque parece conveniente en ese momento no siempre significa que sea la mejor decisión para todo el periodo.
+
+En nuestro ejemplo, la programación dinámica encuentra una combinación que cuesta $5.600 menos.
+
+Por eso utilizamos regla_actual.py como punto de comparación para demostrar la ventaja de la estrategia que estamos proponiendo.
+
+Es importante aclarar que esta es nuestra interpretación de la regla descrita en el caso y no una reproducción del programa real del SITVM.
+
+### 2.4. Implementación de datos.py — Generación de datos sintéticos
+
+En este archivo creamos una función para generar datos de prueba que nos permitan comprobar cómo funcionan los algoritmos con diferentes cantidades de días y viajes.
+
+Como no tenemos acceso a los registros reales de las tarjetas del SITVM, utilizamos *datos sintéticos*, es decir, datos creados por el programa para simular la cantidad de viajes que puede realizar una persona.
+
+El profesor permite utilizar estos datos para realizar las pruebas del laboratorio.
+
+*¿Cómo funciona?*
+
+Utilizamos la biblioteca random de Python para generar listas de viajes.
+
+La función permite establecer:
+
+- dias: cantidad de días que queremos generar.
+- semilla: número que utilizamos para repetir los mismos datos aleatorios.
+- max_viajes: cantidad máxima de viajes que puede aparecer en un día.
+- probabilidad_cero: probabilidad de que un día no tenga viajes.
+
+Para este archivo utilizamos como semilla predeterminada el número 2026.
+
+Esto significa que, si ejecutamos la función varias veces con los mismos parámetros y la misma semilla, obtendremos la misma lista de viajes.
+
+*Función principal:*
+
+- generar_viajes(): genera una lista con la cantidad de viajes diarios, utilizando los parámetros que le indiquemos.
+
+*Ejemplo de uso:*
+
+python
+from datos import generar_viajes
+
+viajes_por_dia = generar_viajes(
+    dias=8,
+    semilla=2026,
+    max_viajes=5,
+    probabilidad_cero=0.05
+)
+
+print(viajes_por_dia)
+
+
+En este ejemplo le estamos indicando al programa que genere una lista de ocho días, con un máximo de cinco viajes por día y una probabilidad del 5 % de generar un día sin viajes.
+
+Los valores generados son datos de prueba y no corresponden a viajes reales de los usuarios del SITVM.
+
+*¿Para qué necesitamos este archivo?*
+
+Nos sirve para crear diferentes casos sin tener que escribir manualmente todas las listas de viajes.
+
+También nos permite utilizar los mismos datos al ejecutar la programación dinámica, la búsqueda exhaustiva y la regla simplificada.
+
+De esta manera podemos comparar sus resultados utilizando exactamente las mismas entradas.
+
+Además, al mantener una semilla fija, las pruebas se pueden repetir y comprobar posteriormente.
+
+Este archivo será importante para pruebas.py y medicion.py, porque desde allí utilizaremos los datos generados para verificar los resultados y realizar los experimentos del laboratorio.
