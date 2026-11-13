@@ -215,65 +215,6 @@ Devolución = 62400 - 39900 = 22500 pesos
 
 En este escenario hipotético se deberían devolver **$22.500**. No estamos afirmando que ese haya sido un cobro real del SITVM.
 
-### 2.5. Implementación de pruebas.py — Verificación de resultados
-
-En este archivo realizamos diferentes pruebas para comprobar que los algoritmos que desarrollamos están funcionando correctamente.
-
-Para esto utilizamos assert de Python, que nos permite comparar el resultado que entrega una función con el resultado que esperamos obtener. Si los valores no coinciden, el programa nos muestra un error.
-
-Lo que buscamos principalmente es comprobar que la programación dinámica encuentre el mismo costo mínimo que la búsqueda exhaustiva.
-
-*¿Qué pruebas realizamos?*
-
-1. *Lista vacía:* comprobamos que, si no hay días registrados, el costo mínimo sea cero.
-2. *Días sin viajes:* verificamos que los días sin viajes no generen ningún cobro.
-3. *Un solo día:* revisamos que el programa escoja correctamente entre pasajes sencillos y un pase diario.
-4. *Meses de 30 y 31 días:* comprobamos que el pase mensual tenga una cobertura de treinta días y no cubra automáticamente el día 31.
-5. *Ejemplo de la Parte 1:* utilizamos los ocho días que resolvimos manualmente para verificar los resultados de los tres algoritmos.
-6. *Devoluciones:* comprobamos que el dinero devuelto sea la diferencia correcta y que nunca sea un valor negativo.
-7. *Datos originales:* verificamos que las funciones no modifiquen las listas de viajes recibidas.
-
-Además, incluimos *30 pruebas aleatorias* utilizando los datos generados en datos.py.
-
-En estas pruebas comparamos los resultados de la programación dinámica y la búsqueda exhaustiva con diferentes listas de entre 1 y 10 días.
-
-*Funciones que utilizamos:*
-
-- ejecutar_pruebas(): ejecuta las verificaciones y comprueba que se cumplan las condiciones establecidas.
-
-*Ejemplo de comprobación:*
-
-python
-ejemplo = [1, 3, 3, 3, 3, 0, 0, 3]
-
-assert costo_minimo(ejemplo) == 39900
-assert costo_exhaustivo(ejemplo) == 39900
-assert costo_regla_actual(ejemplo) == 45500
-
-
-En este ejemplo verificamos que la programación dinámica y la búsqueda exhaustiva encuentren un costo mínimo de $39.900, mientras que nuestra interpretación de la regla actual produce un costo de $45.500.
-
-También comprobamos la devolución:
-
-python
-assert liquidar_tope(ejemplo, 62400) == 22500
-
-
-Esto significa que, si al usuario se le cobraron $62.400, pero el costo mínimo de sus viajes es $39.900, se le deben devolver $22.500.
-
-Para ejecutar las pruebas utilizamos el siguiente comando desde la carpeta principal del proyecto:
-
-powershell
-python src\tope_tarifario\pruebas.py
-
-
-Si todas las verificaciones se cumplen, el programa muestra:
-
-text
-Pruebas correctas: casos límite, ejemplo y 30 instancias aleatorias.
-
-
-Este archivo es importante porque nos ayuda a detectar posibles errores antes de realizar las mediciones. También nos permite comprobar que el algoritmo más rápido no esté sacrificando la exactitud de los resultados.
 
 ## 3. Implementación
 
@@ -606,3 +547,63 @@ De esta manera podemos comparar sus resultados utilizando exactamente las mismas
 Además, al mantener una semilla fija, las pruebas se pueden repetir y comprobar posteriormente.
 
 Este archivo será importante para pruebas.py y medicion.py, porque desde allí utilizaremos los datos generados para verificar los resultados y realizar los experimentos del laboratorio.
+
+### 2.5. Implementación de pruebas.py — Verificación de resultados
+
+En este archivo realizamos diferentes pruebas para comprobar que los algoritmos que desarrollamos están funcionando correctamente.
+
+Para esto utilizamos assert de Python, que nos permite comparar el resultado que entrega una función con el resultado que esperamos obtener. Si los valores no coinciden, el programa nos muestra un error.
+
+Lo que buscamos principalmente es comprobar que la programación dinámica encuentre el mismo costo mínimo que la búsqueda exhaustiva.
+
+*¿Qué pruebas realizamos?*
+
+1. *Lista vacía:* comprobamos que, si no hay días registrados, el costo mínimo sea cero.
+2. *Días sin viajes:* verificamos que los días sin viajes no generen ningún cobro.
+3. *Un solo día:* revisamos que el programa escoja correctamente entre pasajes sencillos y un pase diario.
+4. *Meses de 30 y 31 días:* comprobamos que el pase mensual tenga una cobertura de treinta días y no cubra automáticamente el día 31.
+5. *Ejemplo de la Parte 1:* utilizamos los ocho días que resolvimos manualmente para verificar los resultados de los tres algoritmos.
+6. *Devoluciones:* comprobamos que el dinero devuelto sea la diferencia correcta y que nunca sea un valor negativo.
+7. *Datos originales:* verificamos que las funciones no modifiquen las listas de viajes recibidas.
+
+Además, incluimos *30 pruebas aleatorias* utilizando los datos generados en datos.py.
+
+En estas pruebas comparamos los resultados de la programación dinámica y la búsqueda exhaustiva con diferentes listas de entre 1 y 10 días.
+
+*Funciones que utilizamos:*
+
+- ejecutar_pruebas(): ejecuta las verificaciones y comprueba que se cumplan las condiciones establecidas.
+
+*Ejemplo de comprobación:*
+
+python
+ejemplo = [1, 3, 3, 3, 3, 0, 0, 3]
+
+assert costo_minimo(ejemplo) == 39900
+assert costo_exhaustivo(ejemplo) == 39900
+assert costo_regla_actual(ejemplo) == 45500
+
+
+En este ejemplo verificamos que la programación dinámica y la búsqueda exhaustiva encuentren un costo mínimo de $39.900, mientras que nuestra interpretación de la regla actual produce un costo de $45.500.
+
+También comprobamos la devolución:
+
+python
+assert liquidar_tope(ejemplo, 62400) == 22500
+
+
+Esto significa que, si al usuario se le cobraron $62.400, pero el costo mínimo de sus viajes es $39.900, se le deben devolver $22.500.
+
+Para ejecutar las pruebas utilizamos el siguiente comando desde la carpeta principal del proyecto:
+
+powershell
+python src\tope_tarifario\pruebas.py
+
+
+Si todas las verificaciones se cumplen, el programa muestra:
+
+text
+Pruebas correctas: casos límite, ejemplo y 30 instancias aleatorias.
+
+
+Este archivo es importante porque nos ayuda a detectar posibles errores antes de realizar las mediciones. También nos permite comprobar que el algoritmo más rápido no esté sacrificando la exactitud de los resultados.
