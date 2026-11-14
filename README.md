@@ -607,3 +607,99 @@ Pruebas correctas: casos límite, ejemplo y 30 instancias aleatorias.
 
 
 Este archivo es importante porque nos ayuda a detectar posibles errores antes de realizar las mediciones. También nos permite comprobar que el algoritmo más rápido no esté sacrificando la exactitud de los resultados.
+
+### 2.6. Implementación de `medicion.py` — Experimentos y gráficas
+
+En este archivo desarrollamos los experimentos para comparar el rendimiento de los tres algoritmos que trabajamos anteriormente: programación dinámica, búsqueda exhaustiva y regla simplificada.
+
+Lo que buscamos es observar cuánto tarda cada algoritmo en resolver el problema y cómo cambia la cantidad de operaciones cuando aumentamos el número de días.
+
+Para realizar estas pruebas utilizamos las listas de viajes generadas en `datos.py`, con una semilla fija de 2026. De esta manera, todos los algoritmos trabajan con los mismos datos y podemos repetir los experimentos.
+
+**¿Qué medimos?**
+
+Principalmente analizamos dos aspectos:
+
+- **Tiempo de ejecución:** cuánto tarda cada algoritmo en calcular el resultado.
+- **Cantidad de operaciones:** cuántas operaciones contabiliza cada algoritmo durante su ejecución.
+
+Para medir los tiempos utilizamos `perf_counter()` de Python. Además, repetimos las ejecuciones varias veces y calculamos un promedio para no depender de una sola medición.
+
+La generación de los datos no se incluye dentro del tiempo medido, ya que solamente queremos conocer cuánto tarda cada algoritmo.
+
+**¿Cómo organizamos los experimentos?**
+
+Dividimos las pruebas en dos grupos.
+
+**1. Tamaños pequeños**
+
+Utilizamos listas de 4, 8, 12, 16, 24, 28, 30, 31 y 32 días.
+
+En estos tamaños comparamos los tres algoritmos:
+
+- Programación dinámica.
+- Búsqueda exhaustiva.
+- Regla simplificada.
+
+Incluimos tamaños que se duplican, como 4 y 8, 8 y 16, y 16 y 32 días, para observar cómo cambia el tiempo cuando aumentamos la entrada.
+
+También verificamos con `assert` que la programación dinámica y la búsqueda exhaustiva obtengan el mismo costo mínimo.
+
+**2. Tamaños grandes**
+
+Para estudiar cómo crecen los algoritmos, utilizamos listas de 64, 128, 256, 512, 1.024, 4.096 y 16.384 días.
+
+En estas pruebas solamente ejecutamos la programación dinámica y la regla simplificada.
+
+No utilizamos la búsqueda exhaustiva porque, al aumentar la cantidad de días con viajes, también crece considerablemente el número de combinaciones que debe revisar.
+
+Es importante aclarar que estos tamaños grandes son únicamente para analizar el comportamiento de los algoritmos. No representan meses reales del SITVM.
+
+En todas las listas generadas para las mediciones hay viajes todos los días, de manera que podamos observar cómo aumenta el trabajo de la búsqueda exhaustiva cuando crece el número de días con viajes.
+
+**Verificación de resultados**
+
+Dentro de los experimentos también comprobamos que los algoritmos estén entregando resultados coherentes.
+
+Para los tamaños pequeños, verificamos que la programación dinámica y la búsqueda exhaustiva encuentren el mismo costo mínimo.
+
+También comprobamos que la regla simplificada no produzca un costo inferior al óptimo, ya que su resultado puede ser igual o mayor.
+
+Además de medir los tiempos, utilizamos los contadores de operaciones que desarrollamos en los archivos de cada algoritmo. Estos conteos se realizan fuera del cronómetro para no afectar las mediciones de tiempo.
+
+**Funciones que utilizamos:**
+
+- `repeticiones_para()`: determina cuántas veces ejecutamos cada algoritmo según el tamaño de la entrada.
+- `medir_tiempo()`: mide el tiempo de ejecución y calcula su promedio.
+- `medir()`: genera las mediciones, compara los resultados y registra los costos y operaciones.
+- `guardar_csv()`: guarda los resultados de los experimentos en un archivo CSV.
+- `guardar_grafica()`: genera las gráficas comparativas.
+- `main()`: ejecuta el proceso completo y guarda los archivos.
+
+**Archivos que genera el programa**
+
+Al ejecutar `medicion.py`, los resultados se guardan en la carpeta `graficas/tope_tarifario/`.
+
+| Archivo | Contenido |
+|---|---|
+| `resultados.csv` | Contiene los tamaños de entrada, tiempos promedio, operaciones, costos y diferencias frente al óptimo. |
+| `tiempo_vs_n.png` | Compara los tiempos de ejecución de los algoritmos según el número de días. |
+| `operaciones_vs_n.png` | Compara la cantidad de operaciones contabilizadas por cada algoritmo. |
+
+Las dos gráficas incluyen título, nombres de los ejes y una leyenda para identificar los algoritmos.
+
+También utilizamos escalas logarítmicas en los ejes para facilitar la comparación entre los tamaños pequeños y grandes.
+
+**Ejecución del programa**
+
+Para ejecutar los experimentos, abrimos la terminal de Visual Studio Code desde la carpeta principal del proyecto y utilizamos:
+
+```powershell
+python src\tope_tarifario\medicion.py
+```
+
+El programa realiza las mediciones, muestra los resultados en la terminal y genera los archivos CSV y PNG.
+
+Con estos experimentos podremos comparar cómo se comportan las soluciones que desarrollamos y utilizar los resultados para analizar su eficiencia en la siguiente parte del laboratorio.
+
+Los resultados y las conclusiones se escribirán a partir de las mediciones obtenidas al ejecutar el programa en nuestro computador.
