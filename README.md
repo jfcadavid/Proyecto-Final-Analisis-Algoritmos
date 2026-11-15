@@ -703,3 +703,70 @@ El programa realiza las mediciones, muestra los resultados en la terminal y gene
 Con estos experimentos podremos comparar cómo se comportan las soluciones que desarrollamos y utilizar los resultados para analizar su eficiencia en la siguiente parte del laboratorio.
 
 Los resultados y las conclusiones se escribirán a partir de las mediciones obtenidas al ejecutar el programa en nuestro computador.
+## Parte 3 — Medir y graficar
+
+### 3.1. Cómo hicimos las mediciones
+
+En esta parte ejecutamos los algoritmos que desarrollamos para la liquidación del tope tarifario del SITVM. Queríamos ver cuánto tiempo tarda cada uno y cómo aumenta el número de operaciones cuando crece la lista de días.
+
+Utilizamos los datos sintéticos de `datos.py`, con la semilla fija `2026`, y en estas mediciones generamos viajes en todos los días. Para cada tamaño usamos la misma lista con los tres algoritmos. El tiempo se midió con `time.perf_counter()` y se calculó el promedio de varias ejecuciones, sin incluir el tiempo de generar los datos.
+
+Comparamos programación dinámica, búsqueda exhaustiva y regla simplificada en **nueve tamaños pequeños**: 4, 8, 12, 16, 24, 28, 30, 31 y 32 días. También probamos programación dinámica y regla simplificada con **siete tamaños mayores**: 64, 128, 256, 512, 1.024, 4.096 y 16.384 días. No ejecutamos la búsqueda exhaustiva en los tamaños grandes, porque su cantidad de combinaciones aumenta rápidamente.
+
+Los tamaños superiores a 31 días solo sirven para estudiar el crecimiento de los algoritmos; **no son meses reales del SITVM**. Las operaciones que registramos son las contabilizadas por los contadores de nuestros programas, no instrucciones medidas directamente en el procesador.
+
+Los resultados completos se encuentran en [`graficas/tope_tarifario/resultados.csv`](graficas/tope_tarifario/resultados.csv).
+
+### 3.2. Gráfica de tiempo de ejecución
+
+![Comparación de tiempos de ejecución](graficas/tope_tarifario/tiempo_vs_n.png)
+
+En esta gráfica observamos que la programación dinámica y la regla simplificada aumentan su tiempo de ejecución de forma más controlada. En cambio, la búsqueda exhaustiva comienza a crecer mucho más rápido cuando agregamos días con viajes.
+
+Estos son algunos resultados de la ejecución que hicimos en nuestro computador. Convertimos los tiempos de segundos a milisegundos para facilitar la lectura:
+
+| Días | Programación dinámica (ms) | Búsqueda exhaustiva (ms) | Regla simplificada (ms) |
+|---:|---:|---:|---:|
+| 8 | 0,0135 | 0,0152 | 0,0074 |
+| 16 | 0,0271 | 0,0913 | 0,0168 |
+| 24 | 0,0372 | 0,6045 | 0,0117 |
+| 32 | 0,0559 | 3,6968 | 0,0187 |
+
+Al comparar los tamaños de 16 y 32 días, el tiempo de la programación dinámica se multiplicó aproximadamente por **2,07**, mientras que el de la búsqueda exhaustiva se multiplicó aproximadamente por **40,49**. Esto muestra por qué la búsqueda exhaustiva deja de ser conveniente a medida que aumenta la entrada.
+
+En entradas muy pequeñas hay variaciones entre mediciones porque los tiempos son de apenas unas fracciones de milisegundo. Por eso revisamos la tendencia general y también el conteo de operaciones.
+
+### 3.3. Gráfica de operaciones
+
+![Comparación de operaciones contabilizadas](graficas/tope_tarifario/operaciones_vs_n.png)
+
+Esta gráfica permite observar el crecimiento del trabajo de cada algoritmo sin depender únicamente de los tiempos del computador.
+
+Por ejemplo, con **16 días**, la programación dinámica contabilizó **48 operaciones**, frente a **195** de la búsqueda exhaustiva. Con **32 días**, la programación dinámica registró **96 operaciones** y la búsqueda exhaustiva **7.671**.
+
+En nuestro contador, las operaciones de programación dinámica aumentaron proporcionalmente al número de días: al pasar de 16 a 32 días, el conteo pasó de 48 a 96. En cambio, el conteo de la búsqueda exhaustiva aumentó mucho más rápido porque vuelve a explorar combinaciones que ya había revisado.
+
+Las gráficas están en escala logarítmica, por lo que las distancias visuales no representan incrementos iguales en una escala normal.
+
+### 3.4. ¿Los tres algoritmos dan el mismo costo?
+
+Durante el experimento utilizamos `assert` para comprobar que la programación dinámica y la búsqueda exhaustiva obtuvieran el mismo costo mínimo en los nueve tamaños donde ambas se ejecutaron. **Las comprobaciones pasaron**.
+
+La regla simplificada fue rápida en varias de nuestras mediciones, pero no siempre encontró el costo más barato. Estos son algunos casos registrados en el CSV:
+
+| Días | Costo mínimo (COP) | Regla simplificada (COP) | Cobro adicional (COP) |
+|---:|---:|---:|---:|
+| 16 | $79.800 | $91.000 | $11.200 |
+| 24 | $119.700 | $135.000 | $15.300 |
+| 128 | $579.900 | $583.800 | $3.900 |
+| 256 | $1.158.900 | $1.215.000 | $56.100 |
+
+Los casos de 128 y 256 días son entradas sintéticas para estudiar escalabilidad y no corresponden a meses reales. Además, la regla simplificada que medimos sigue la interpretación que declaramos en la Parte 1, porque no conocemos el código original del SITVM.
+
+### 3.5. Qué concluimos de estas mediciones
+
+Con las pruebas observamos que **la programación dinámica mantiene el costo mínimo exacto** y realiza mucho menos trabajo que la búsqueda exhaustiva cuando crece la cantidad de días. La búsqueda exhaustiva nos sirvió para comprobar los resultados en los tamaños pequeños, pero no sería conveniente utilizarla para procesar muchas tarjetas con numerosos días de viajes.
+
+La regla simplificada puede ejecutarse más rápido, pero en algunas listas cobró más que la combinación óptima. Por eso no basta con escoger el algoritmo que termine primero: también debemos asegurarnos de que la devolución al usuario sea correcta.
+
+Estos resultados corresponden a datos sintéticos ejecutados en nuestro computador. Todavía no demuestran por sí solos cuánto tardaría el cierre mensual completo para las aproximadamente 950.000 tarjetas ni si el proceso total cumpliría la ventana de cuatro horas. Esa estimación y el análisis de consumo energético se desarrollarán en la siguiente parte.
