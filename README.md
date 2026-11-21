@@ -216,6 +216,265 @@ Devolución = 62400 - 39900 = 22500 pesos
 En este escenario hipotético se deberían devolver **$22.500**. No estamos afirmando que ese haya sido un cobro real del SITVM.
 
 
+### Operación 3 — Estrategias para detectar franjas de congestión
+
+Diseñamos dos algoritmos que reciben la misma lista `saldos` y devuelven `(suma_maxima, inicio, fin)`: **búsqueda exhaustiva**, para tener una referencia exacta, y **divide y vencerás**, como propuesta de mejora.
+
+Los dos trabajan con una lista no vacía y buscan tramos consecutivos no vacíos, sin modificar la entrada. Las posiciones comienzan en cero y ambos extremos del tramo están incluidos. En caso de empate en la suma, se prefiere el inicio más pequeño y, si también coincide, el final más pequeño.
+
+#### Criterio común para comparar resultados
+
+Usaremos la misma regla al comparar dos soluciones candidatas:
+
+```text
+FUNCIÓN es_mejor(candidata, actual):
+
+    SI candidata.suma > actual.suma:
+        RETORNAR VERDADERO
+
+    SI candidata.suma < actual.suma:
+        RETORNAR FALSO
+
+    SI candidata.inicio < actual.inicio:
+        RETORNAR VERDADERO
+
+    SI candidata.inicio > actual.inicio:
+        RETORNAR FALSO
+
+    RETORNAR candidata.fin < actual.fin
+```
+
+Así, cuando varias sumas son iguales, los dos programas elegirán el mismo tramo.
+
+#### Estrategia 1 — Búsqueda exhaustiva
+
+La primera estrategia revisa **todos los tramos consecutivos posibles**.
+
+Para cada posición inicial comienza con una suma de cero y agrega los valores siguientes uno por uno. Después de cada suma comprueba si encontró un tramo mejor.
+
+La ventaja de ir acumulando es que no necesitamos volver a sumar desde cero los elementos de cada tramo: reutilizamos la suma que llevamos desde el mismo inicio.
+
+**Pseudocódigo:**
+
+```text
+FUNCIÓN tramo_maximo_exhaustivo(saldos):
+
+    n = longitud(saldos)   // Se supone n >= 1
+    mejor = (saldos[0], 0, 0)
+
+    PARA inicio DESDE 0 HASTA n - 1:
+
+        suma = 0
+
+        PARA fin DESDE inicio HASTA n - 1:
+
+            suma = suma + saldos[fin]
+            candidata = (suma, inicio, fin)
+
+            SI es_mejor(candidata, mejor):
+                mejor = candidata
+
+    RETORNAR mejor
+```
+
+Esta estrategia encuentra la solución exacta porque evalúa cada tramo no vacío.
+
+Tiene dos ciclos anidados y revisa `n(n + 1) / 2` tramos, por lo que esperamos **tiempo Θ(n²)**.
+
+Como solo mantiene la suma y algunas posiciones, requiere **espacio auxiliar Θ(1)**.
+
+Estas complejidades corresponden a **nuestra implementación propuesta**, no a una inspección del código real del SITVM.
+
+#### Estrategia 2 — Divide y vencerás
+
+La segunda estrategia parte de una observación: si dividimos una serie en dos mitades, su mejor tramo debe estar en una de estas tres situaciones:
+
+1. Completamente en la mitad izquierda.
+2. Completamente en la mitad derecha.
+3. Cruzando el centro, con al menos un elemento de cada mitad.
+
+Buscamos el mejor tramo de cada tipo y escogemos el ganador con `es_mejor`.
+
+Para las dos mitades repetimos el mismo procedimiento hasta llegar al **caso base** de un solo elemento.
+
+Así obtenemos el máximo exacto sin recorrer todos los tramos mediante dos ciclos anidados.
+
+**Pseudocódigo de la división:**
+
+```text
+FUNCIÓN tramo_maximo_divide_venceras(saldos):
+
+    n = longitud(saldos)   // Se supone n >= 1
+
+    RETORNAR resolver(saldos, 0, n - 1)
+
+
+FUNCIÓN resolver(saldos, inicio, fin):
+
+    SI inicio == fin:
+        RETORNAR (saldos[inicio], inicio, fin)
+
+    centro = (inicio + fin) // 2
+
+    izquierda = resolver(
+        saldos, inicio, centro
+    )
+
+    derecha = resolver(
+        saldos, centro + 1, fin
+    )
+
+    cruce = mejor_cruce(
+        saldos, inicio, centro, fin
+    )
+
+    mejor = izquierda
+
+    SI es_mejor(derecha, mejor):
+        mejor = derecha
+
+    SI es_mejor(cruce, mejor):
+        mejor = cruce
+
+    RETORNAR mejor
+```
+
+**Pseudocódigo para encontrar el mejor tramo que cruza el centro:**
+
+```text
+FUNCIÓN mejor_cruce(saldos, inicio, centro, fin):
+
+    // Mejor tramo que termina en el centro.
+    suma = 0
+    mejor_izquierda = -infinito
+    inicio_cruce = centro
+
+    PARA i DESDE centro HASTA inicio,
+    RETROCEDIENDO:
+
+        suma = suma + saldos[i]
+
+        SI suma > mejor_izquierda O
+           (suma == mejor_izquierda Y
+            i < inicio_cruce):
+
+            mejor_izquierda = suma
+            inicio_cruce = i
+
+    // Mejor tramo que comienza en centro + 1.
+    suma = 0
+    mejor_derecha = -infinito
+    fin_cruce = centro + 1
+
+    PARA j DESDE centro + 1 HASTA fin:
+
+        suma = suma + saldos[j]
+
+        SI suma > mejor_derecha:
+            mejor_derecha = suma
+            fin_cruce = j
+
+    RETORNAR (
+        mejor_izquierda + mejor_derecha,
+        inicio_cruce,
+        fin_cruce
+    )
+```
+
+Al recorrer la izquierda hacia atrás, en caso de empate preferimos el inicio más pequeño. Al recorrer la derecha hacia adelante conservamos el primer final que alcanza la mejor suma.
+
+Esto mantiene el criterio de desempate común.
+
+Inicializamos las mejores sumas en `-infinito` para que también funcione cuando todos los valores sean negativos.
+
+En cada llamada dividimos el problema en dos partes y usamos tiempo lineal para calcular el mejor cruce.
+
+Su recurrencia es:
+
+```text
+T(n) = 2T(n/2) + Θ(n)
+```
+
+Para tamaños que se dividen exactamente por la mitad, de ahí esperamos **tiempo Θ(n log n)**.
+
+Si usamos **índices y no copiamos sublistas**, la profundidad de la recursividad requiere **espacio auxiliar Θ(log n)**.
+
+#### Ejemplo manual de ocho intervalos
+
+Para comprobar el diseño utilizamos estos datos ficticios de una estación, con intervalos de cinco minutos:
+
+```python
+saldos = [3, -2, 5, -1, 4, -6, 2, -1]
+```
+
+| Intervalo | Posición en Python | Saldo neto |
+|---|---:|---:|
+| 1 | 0 | +3 |
+| 2 | 1 | -2 |
+| 3 | 2 | +5 |
+| 4 | 3 | -1 |
+| 5 | 4 | +4 |
+| 6 | 5 | -6 |
+| 7 | 6 | +2 |
+| 8 | 7 | -1 |
+
+**Comprobación con búsqueda exhaustiva**
+
+La tabla muestra el mejor tramo que encontramos al fijar cada intervalo de inicio y acumular los valores siguientes:
+
+| Intervalo inicial | Mejor intervalo final | Suma máxima desde ese inicio |
+|---:|---:|---:|
+| 1 | 5 | **9** |
+| 2 | 5 | 6 |
+| 3 | 5 | 8 |
+| 4 | 5 | 3 |
+| 5 | 5 | 4 |
+| 6 | 7 | -4 |
+| 7 | 7 | 2 |
+| 8 | 8 | -1 |
+
+**Comprobación con divide y vencerás**
+
+Primero dividimos la lista entre las posiciones 3 y 4:
+
+```text
+Mitad izquierda (0 a 3): [3, -2, 5, -1]
+
+Mitad derecha   (4 a 7): [4, -6, 2, -1]
+```
+
+- **Mejor tramo de la izquierda:** posiciones 0 a 2, con suma `3 - 2 + 5 = 6`.
+- **Mejor tramo de la derecha:** posición 4, con suma `4`.
+- **Mejor tramo que cruza el centro:** el mayor sufijo de la izquierda es `3 - 2 + 5 - 1 = 5` (posiciones 0 a 3); el mayor prefijo de la derecha es `4` (posición 4). Su suma es `5 + 4 = 9`, desde la posición 0 hasta la 4.
+
+Al comparar `6`, `4` y `9`, el mayor es **9**.
+
+Por lo tanto, ambas estrategias deben devolver:
+
+```python
+(9, 0, 4)
+```
+
+El tramo va del **intervalo 1 al 5**, dura **25 minutos** y tiene un saldo neto acumulado de **9**.
+
+Este valor no representa necesariamente nueve personas en total en la plataforma, sino la suma de los cambios netos de esos intervalos.
+
+#### Comparación teórica inicial
+
+| Aspecto | Búsqueda exhaustiva | Divide y vencerás |
+|---|---|---|
+| Resultado | Máximo exacto | Máximo exacto |
+| Método | Revisar todos los tramos con suma acumulada | Resolver mitades y el mejor tramo que cruza el centro |
+| Tiempo esperado | `Θ(n²)` | `Θ(n log n)` |
+| Espacio auxiliar esperado | `Θ(1)` | `Θ(log n)` |
+| Principal limitación | El trabajo crece rápidamente | Requiere recursividad y combinar correctamente los resultados |
+
+Por ahora estas son **complejidades justificadas a partir del diseño**, no resultados de medición.
+
+Cuando implementemos las dos estrategias en Python, comprobaremos que entreguen los mismos resultados y compararemos sus tiempos y operaciones con datos sintéticos de tamaños crecientes.
+
+Con esas mediciones podremos estimar el comportamiento para los aproximadamente 166.000 intervalos por estación y el consumo energético del servidor indicado en el caso.
+
 ## 3. Implementación
 
 **En desarrollo para el Laboratorio 4 (18 de noviembre).** Aquí agregaremos la explicación de los archivos `estrategia.py`, `exhaustivo.py`, `regla_actual.py` y `pruebas.py`, con sus enlaces al código una vez estén implementados.
