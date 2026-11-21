@@ -632,3 +632,69 @@ Este análisis cubre la **operación 4 del Laboratorio 4**. El proyecto final de
 - [Código y mediciones del Grupo 10](https://github.com/jfcadavid/Proyecto-Final-Analisis-Algoritmos).
 - [Ley 1581 de 2012, protección de datos personales — Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981).
 - [Ley 336 de 1996, Estatuto Nacional de Transporte — Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=346).
+
+---
+
+# Proyecto Final — Análisis de Algoritmos
+
+## 1. Análisis del problema
+
+### Operación 3 — Detección de las franjas de congestión
+
+#### Descripción del problema
+
+Como segunda operación del Caso 1 del SITVM escogimos la *detección de las franjas de congestión. El área de Planeación necesita encontrar, para cada estación, el tramo de intervalos consecutivos de cinco minutos que tenga la **mayor suma de saldos netos de pasajeros*. Esta información ayuda a identificar los periodos en los que podría ser necesario reforzar la frecuencia de los trenes.
+
+En cada intervalo se calcula el saldo neto de la plataforma:
+
+text
+Saldo neto = pasajeros que ingresaron - pasajeros evacuados por los trenes
+
+
+Un valor positivo significa que entraron más personas de las que fueron evacuadas; un valor negativo significa que ocurrió lo contrario. Un valor de cero indica que ambas cantidades fueron iguales.
+
+*Buscamos la suma más alta de un tramo consecutivo*, no simplemente el mayor valor de un intervalo aislado. Esa suma representa el cambio neto acumulado durante el tramo; por sí sola no indica la cantidad total de personas que había en la plataforma.
+
+#### Situación actual y tamaño del problema
+
+Según el caso, el programa actual evalúa todos los tramos posibles de la serie. Con datos de un mes tarda varios minutos por estación, y con el histórico de dos años, de aproximadamente *166.000 intervalos por estación*, no termina en un tiempo útil.
+
+El SITVM cuenta con *80 estaciones de metro y cable*, por lo que interesa encontrar una solución que pueda aplicarse a cada estación sin perder exactitud.
+
+El enunciado no explica cómo calcula internamente cada suma el programa actual. Por eso no le asignamos una complejidad exacta a ese código que desconocemos; sí podremos calcular la complejidad de la búsqueda exhaustiva que implementaremos como referencia.
+
+#### Entradas, salidas y estructuras de datos
+
+*Entrada:* una lista de enteros saldos, ordenada cronológicamente, donde cada elemento representa el saldo neto de un intervalo de cinco minutos de *una estación*. El tamaño de entrada n es la cantidad de intervalos de esa lista.
+
+python
+saldos = [3, -2, 5, -1, 4, -6, 2, -1]
+
+
+En este ejemplo, n = 8. Para una serie histórica de dos años, el caso indica aproximadamente n = 166000 por estación.
+
+*Salida:* una tupla con tres enteros:
+
+python
+(suma_maxima, inicio, fin)
+
+
+- suma_maxima: mayor suma obtenida entre todos los tramos consecutivos no vacíos.
+- inicio: posición del primer intervalo del tramo elegido.
+- fin: posición del último intervalo del tramo elegido.
+
+Las posiciones comienzan en *0*, como los índices de las listas de Python, e incluyen ambos extremos.
+
+Elegimos una lista para conservar el orden temporal y una tupla para devolver el resultado de manera idéntica en los dos algoritmos.
+
+#### Restricciones y supuestos
+
+- La solución debe encontrar el *máximo exacto*, no una aproximación.
+- Solo se permiten *tramos consecutivos* y con al menos un intervalo.
+- Se deben considerar valores positivos, negativos y ceros. Si todos son negativos, el resultado será el intervalo con el valor menos negativo.
+- La entrada debe tener al menos un elemento (n >= 1). Esta será una precondición común de las dos funciones.
+- No modificaremos la lista original. Trabajaremos con la serie de saldos, sin alterar las validaciones del sistema.
+- Resolveremos una estación por ejecución de la función; el proceso podrá repetirla para las demás estaciones.
+- *Desempate acordado por el equipo:* si dos tramos tienen la misma suma, escogemos el que *empieza primero; si también tienen el mismo inicio, el que **termina primero*.
+
+El caso exige la suma máxima, pero no define cómo resolver estos empates. El criterio nos permitirá comparar exactamente las salidas de ambas implementaciones.
