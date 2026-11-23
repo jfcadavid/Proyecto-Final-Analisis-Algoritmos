@@ -959,3 +959,41 @@ Por ahora estas son **complejidades justificadas a partir del diseño**, no resu
 Cuando implementemos las dos estrategias en Python, comprobaremos que entreguen los mismos resultados y compararemos sus tiempos y operaciones con datos sintéticos de tamaños crecientes.
 
 Con esas mediciones podremos estimar el comportamiento para los aproximadamente 166.000 intervalos por estación y el consumo energético del servidor indicado en el caso.
+
+### Operación 3 — Pruebas de correctitud
+
+Para verificar la detección de franjas de congestión, creamos el archivo [`src/congestion/pruebas.py`](src/congestion/pruebas.py). El objetivo es comprobar que la búsqueda exhaustiva y divide y vencerás encuentren exactamente la misma suma máxima y las mismas posiciones de inicio y fin.
+
+Utilizamos `assert` para comparar los resultados y comprobar las restricciones que definimos en el diseño. Organizamos las pruebas de la siguiente manera:
+
+| Prueba | Qué verificamos |
+|---|---|
+| 16 casos con resultado conocido | El ejemplo de ocho intervalos, un elemento, valores negativos, ceros, empates y tramos en diferentes posiciones. |
+| 300 instancias aleatorias | Que los dos algoritmos obtengan el mismo resultado con listas de 1 a 32 intervalos. |
+| Validez de la respuesta | Que los índices estén dentro de la lista y que la suma coincida con el tramo devuelto. |
+| Conservación de los datos | Que los algoritmos y sus contadores no modifiquen la lista original. |
+| Conteo de tramos | Que la búsqueda exhaustiva examine `n(n + 1) / 2` tramos. |
+| Generación de datos | Que la semilla `2026` permita repetir los datos y que se respeten los límites configurados. |
+| Entradas inválidas | Que las funciones rechacen listas vacías y que el generador rechace tamaños y límites inválidos. |
+
+En las pruebas aleatorias utilizamos la función `generar_saldos()` del archivo `datos.py`, con saldos entre `-20` y `20`. La semilla fija permite repetir exactamente las instancias. En esas pruebas no conocemos de antemano el tramo óptimo de cada lista, por lo que comparamos ambas estrategias exactas; los casos definidos a mano sirven además para verificar resultados esperados específicos.
+
+Para ejecutar las pruebas desde la carpeta principal del proyecto usamos:
+
+```powershell
+python src/congestion/pruebas.py
+```
+
+En la ejecución de verificación obtuvimos el siguiente resumen:
+
+```text
+Pruebas correctas de la operación 3 — Congestión del SITVM
+Casos fijos comprobados: 16
+Instancias aleatorias reproducibles: 300
+Comprobaciones adicionales: generador y entradas inválidas
+Resultado: ambos algoritmos coinciden y conservan las entradas.
+```
+
+Por ejemplo, con la lista `saldos = [3, -2, 5, -1, 4, -6, 2, -1]`, los dos algoritmos devuelven `(9, 0, 4)`, como calculamos a mano en el diseño.
+
+Estas pruebas aportan evidencia de correctitud para los casos evaluados, pero no reemplazan una demostración matemática para todas las entradas posibles. Los tiempos de ejecución y las gráficas comparativas corresponden a la siguiente etapa del proyecto.
