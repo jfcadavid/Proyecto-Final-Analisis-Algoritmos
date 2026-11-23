@@ -1,11 +1,9 @@
-# Laboratorio 4 y proyecto final — Análisis de Algoritmos
+# Proyecto Final — Análisis de Algoritmos
 
 **Institución:** Instituto Tecnológico Metropolitano (ITM)  
-**Asignatura:** Análisis de Algoritmos  
-**Periodo académico:** 2026-2  
+**Asignatura:** Análisis de Algoritmos · **Periodo:** 2026-2  
 **Grupo:** 10 — Asíncrono  
-**Caso asignado:** Caso 1 — Conciliación nocturna del recaudo del Sistema Integrado de Transporte del Valle Metropolitano (SITVM)  
-**Operación desarrollada:** Operación 4 — Liquidación del tope tarifario
+**Caso asignado:** Caso 1 — Conciliación nocturna del recaudo del Sistema Integrado de Transporte del Valle Metropolitano (SITVM)
 
 **Integrantes:**
 
@@ -14,201 +12,193 @@
 - Juan David Velásquez Murillo
 - Jhon Fernando Sánchez Álvarez
 
-**Fechas de entrega:** Laboratorio 4, 18 de noviembre de 2026; proyecto final, 23 de noviembre de 2026.
+**Fecha de entrega:** 23 de noviembre de 2026.  
+**Operaciones seleccionadas:** Operación 3 — Detección de franjas de congestión; Operación 4 — Liquidación del tope tarifario.  
+**Repositorio:** [Proyecto-Final-Analisis-Algoritmos](https://github.com/jfcadavid/Proyecto-Final-Analisis-Algoritmos).
 
-En este repositorio estudiamos cómo calcular el costo mínimo de los viajes mensuales de una tarjeta del SITVM. Comparamos la programación dinámica, una búsqueda exhaustiva y una interpretación de la regla simplificada descrita en el caso. Utilizamos pruebas automáticas y datos sintéticos para comprobar los resultados y analizar el rendimiento.
-
-El documento presenta **las cuatro partes del Laboratorio 4**. Esta entrega desarrolla la **operación 4**; para el proyecto final corresponde incorporar otra operación del Caso 1 y completar su análisis junto con el informe general. En la entrega final, el **PDF debe coincidir con el contenido del README**, y el historial de commits debe permitir identificar los aportes de los integrantes.
-
-**Contenido:** [Ejecución](#cómo-ejecutar-el-proyecto) · [Parte 1: Modelado](#parte-1--modelar-y-resolver-a-mano) · [Parte 2: Implementación](#parte-2--implementar-y-verificar) · [Parte 3: Mediciones](#parte-3--medir-y-graficar) · [Parte 4: Análisis](#parte-4--análisis-de-los-resultados)
-
----
+En este proyecto estudiamos dos operaciones del SITVM: **liquidación del tope tarifario** y **detección de franjas de congestión**. Para cada una analizamos el problema, diseñamos alternativas algorítmicas, implementamos las soluciones en Python y verificamos sus resultados. También medimos el rendimiento con datos sintéticos y estimamos el consumo energético para recomendar las estrategias más adecuadas. Las mediciones se realizaron en un computador de pruebas, no en el servidor real del SITVM.
 
 ## Cómo ejecutar el proyecto
 
-### Requisitos
+### Requisitos y preparación
 
-- Tener instalado **Python 3.10 o una versión posterior**.
-- Tener acceso a una terminal, como PowerShell o la terminal de Visual Studio Code.
-- Instalar la dependencia indicada en `requirements.txt` (`matplotlib`, utilizada para las gráficas).
+Necesitamos **Python 3.10 o posterior**, Git y una terminal, como PowerShell o la de Visual Studio Code. Para generar las gráficas usamos `matplotlib`, incluida en `requirements.txt`. No es necesaria una interfaz gráfica, una base de datos ni un servicio web.
 
-No se necesita una interfaz gráfica, una base de datos ni un servidor para ejecutar los ejercicios. El proyecto funciona desde la terminal.
-
-### 1. Descargar y abrir el repositorio
-
-Si todavía no tenemos una copia local, ejecutamos:
+Si todavía no tenemos el repositorio, lo descargamos y entramos en su carpeta:
 
 ```powershell
 git clone https://github.com/jfcadavid/Proyecto-Final-Analisis-Algoritmos.git
 cd Proyecto-Final-Analisis-Algoritmos
 ```
 
-Si el proyecto ya está descargado, abrimos su carpeta en Visual Studio Code y nos ubicamos en la raíz del repositorio. Para traer los cambios más recientes podemos usar `git pull origin main`, siempre que hayamos guardado antes nuestros cambios locales.
-
-### 2. Instalar la dependencia
-
-Desde la carpeta principal:
+Si ya lo tenemos en el computador, abrimos la carpeta del proyecto en Visual Studio Code y, después de guardar los cambios locales, podemos actualizarla con `git pull origin main`. Desde la **raíz del repositorio** instalamos la dependencia:
 
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
-En Windows, si el comando `python` no está disponible, podemos utilizar `py` en su lugar. En otros sistemas, el comando puede ser `python3`.
+En Windows también se puede utilizar `py` cuando `python` no esté disponible.
 
-### 3. Ejecutar las pruebas de la Parte 2
+### Ejecutar la operación 4 — Tope tarifario
+
+Primero comprobamos que los algoritmos entreguen los resultados esperados:
 
 ```powershell
 python src/tope_tarifario/pruebas.py
 ```
 
-Cuando todas las comprobaciones pasan, el programa muestra:
-
-```text
-Pruebas correctas: casos límite, ejemplo y 30 instancias aleatorias.
-```
-
-Entre otras verificaciones, se comprueba el ejemplo manual de ocho días: el costo mínimo es **$39.900** y la regla simplificada que definimos produce **$45.500**.
-
-### 4. Ejecutar los experimentos de la Parte 3
+Después ejecutamos sus experimentos:
 
 ```powershell
 python src/tope_tarifario/medicion.py
 ```
 
-Este comando utiliza los algoritmos que ya están implementados y genera los resultados dentro de `graficas/tope_tarifario/`:
+Este último comando genera `resultados.csv`, `tiempo_vs_n.png` y `operaciones_vs_n.png` dentro de `graficas/tope_tarifario/`. Los datos y las gráficas describen la ejecución en el computador donde se lance el programa.
 
-- `resultados.csv`: tiempos promedio, cantidades de operaciones y costos.
-- `tiempo_vs_n.png`: comparación de tiempos frente al número de días.
-- `operaciones_vs_n.png`: comparación de operaciones frente al número de días.
+### Ejecutar la operación 3 — Franjas de congestión
 
-La búsqueda exhaustiva **solo se ejecuta con tamaños pequeños**, porque su trabajo aumenta rápidamente. Los tiempos pueden cambiar entre computadores; por eso, las gráficas del informe se basan en los resultados que medimos y guardamos en el CSV.
+Primero ejecutamos sus pruebas automatizadas:
 
-### Estructura del proyecto
+```powershell
+python src/congestion/pruebas.py
+```
+
+Si todo está correcto, el programa confirma los **16 casos fijos**, las **300 instancias aleatorias reproducibles** y las comprobaciones adicionales del generador y las entradas inválidas. Para producir las mediciones:
+
+```powershell
+python src/congestion/medicion.py
+```
+
+Los resultados se guardan en `graficas/congestion/`:
+
+- `resultados.csv`: tiempos, operaciones y tramos encontrados.
+- `tiempo_vs_n.png` y `operaciones_vs_n.png`: gráficas comparativas.
+- `resumen_mediciones.md`: resumen automático de la ejecución para facilitar la elaboración del informe.
+
+Los tiempos cambian según el equipo. Para este informe utilizamos los resultados de los archivos CSV que acompañan las gráficas; si volvemos a ejecutar los experimentos, debemos revisar el resumen y actualizar las cifras correspondientes. La búsqueda exhaustiva de congestión se detiene en tamaños pequeños; **no** se ejecuta con 166.000 intervalos porque su costo es muy alto.
+
+### Organización de archivos
 
 ```text
 Proyecto-Final-Analisis-Algoritmos/
 ├── README.md
 ├── requirements.txt
 ├── src/
-│   └── tope_tarifario/
-│       ├── estrategia.py
+│   ├── tope_tarifario/
+│   │   ├── estrategia.py
+│   │   ├── exhaustivo.py
+│   │   ├── regla_actual.py
+│   │   ├── datos.py
+│   │   ├── pruebas.py
+│   │   └── medicion.py
+│   └── congestion/
 │       ├── exhaustivo.py
-│       ├── regla_actual.py
+│       ├── divide_venceras.py
 │       ├── datos.py
 │       ├── pruebas.py
 │       └── medicion.py
 └── graficas/
-    └── tope_tarifario/
+    ├── tope_tarifario/
+    │   ├── resultados.csv
+    │   ├── tiempo_vs_n.png
+    │   └── operaciones_vs_n.png
+    └── congestion/
         ├── resultados.csv
         ├── tiempo_vs_n.png
-        └── operaciones_vs_n.png
+        ├── operaciones_vs_n.png
+        └── resumen_mediciones.md
 ```
+
+Los archivos que comparten nombre no se sustituyen: `src/tope_tarifario/exhaustivo.py` resuelve combinaciones de pases, mientras que `src/congestion/exhaustivo.py` busca tramos consecutivos de mayor suma.
 
 ---
 
-## Parte 1 — Modelar y resolver a mano
+## 1. Análisis del problema
 
-### 1.1. Análisis del problema
+### 1.1. Contexto y operaciones críticas del SITVM
 
-#### Contexto del Caso 1
+El SITVM opera metro, dos líneas de cable y buses alimentadores en un área metropolitana cercana a cuatro millones de habitantes. Los usuarios validan sus viajes mediante tarjetas sin contacto, y un proceso nocturno organiza la información para Recaudo, Atención al Usuario y Planeación de la Operación.
 
-El SITVM opera el metro, dos líneas de cable y buses alimentadores para una población metropolitana cercana a cuatro millones de habitantes. Los usuarios registran sus viajes con tarjetas sin contacto y, durante la noche, el sistema procesa las validaciones recibidas.
+El caso describe cuatro operaciones críticas: **(1)** deduplicar validaciones, **(2)** ordenar por tarjeta y hora, **(3)** detectar franjas de congestión y **(4)** liquidar el tope tarifario. El proceso actual tarda **más de ocho horas**. Las operaciones 1 y 2 deben terminar dentro de la ventana de **00:00 a 04:00**, y la operación 4 comparte esa ventana durante el cierre mensual. Para la operación 3 el enunciado no fija una ventana individual de cuatro horas.
 
-El proceso realiza cuatro operaciones: **deduplicar validaciones**, **ordenarlas por tarjeta y hora**, **detectar franjas de congestión** y **liquidar el tope tarifario**. Actualmente tarda **más de ocho horas**, aunque las operaciones 1 y 2 deben ajustarse a una ventana de **cuatro horas, de 00:00 a 04:00**. La operación 4 comparte esa ventana en el cierre de mes.
+El cliente informa alrededor de **1.400.000 validaciones diarias**, entre **4 % y 9 % de registros repetidos**, **950.000 tarjetas usadas al mes**, **80 estaciones** y un único servidor de aproximadamente **500 W** bajo carga sostenida, sin procesamiento paralelo. Estas cifras son contexto del caso; no son datos reales que hayamos procesado.
 
-Para este laboratorio trabajamos la **operación 4**. El problema consiste en calcular cuál es la combinación más barata de pasajes y pases que cubre los viajes mensuales de una tarjeta personalizada. Si al usuario se le cobró de más, el sistema debe devolverle exactamente la diferencia como saldo en la tarjeta.
+Seleccionamos las operaciones 4 y 3 porque ambas necesitan resultados exactos y permiten comparar métodos con comportamientos computacionales diferentes. La energía de referencia del proceso completo, si el servidor trabaja más de ocho horas a 0,5 kW constantes, supera **4 kWh por ejecución nocturna**. No podemos atribuir ese consumo solamente a las dos operaciones seleccionadas.
 
-El procedimiento actual intenta probar todas las combinaciones, pero puede tardar demasiado cuando hay viajes durante muchos días. En esos casos utiliza una regla simplificada que no siempre consigue el menor costo.
+### 1.2. Operación 4 — Liquidación del tope tarifario
 
-#### Entradas, salidas y unidades
+Al cierre de cada mes, ninguna persona con tarjeta personalizada debe pagar más que la combinación de productos más barata que cubra todos sus viajes. Si el sistema cobró una cantidad superior, debe devolver la diferencia exacta como saldo de la tarjeta. La estrategia actual descrita en el caso explora combinaciones de pases; cuando esta búsqueda tarda demasiado, utiliza una regla simplificada que puede cobrar de más.
 
-La entrada principal es `viajes_por_dia`, una lista de enteros no negativos: cada posición representa un día y cada valor indica cuántos viajes se realizaron. Un día sin viajes se representa con `0`.
+**Entradas:** `viajes_por_dia`, lista ordenada de enteros no negativos que indica cuántos viajes hubo en cada día, y `cobrado`, valor total descontado, expresado en pesos colombianos. **Salidas:** costo mínimo exacto y devolución `max(0, cobrado - costo_minimo)`. Los viajes de la lista se suponen previamente depurados y no debemos modificarla.
 
-Para calcular la devolución, la función `liquidar_tope()` también recibe `cobrado`, el valor realmente descontado durante el periodo, expresado en **pesos colombianos (COP)**.
-
-Las tarifas del **perfil general** son:
-
-| Producto | Precio (COP) | Cobertura |
+| Producto del perfil general | Precio (COP) | Cobertura |
 |---|---:|---|
 | Pasaje sencillo | $3.900 | Un viaje |
-| Pase diario | $9.500 | Viajes ilimitados durante un día calendario |
-| Pase semanal | $36.000 | Viajes ilimitados durante siete días consecutivos |
-| Pase mensual | $135.000 | Viajes ilimitados durante treinta días consecutivos |
+| Pase diario | $9.500 | Viajes ilimitados durante un día |
+| Pase semanal | $36.000 | Siete días consecutivos |
+| Pase mensual | $135.000 | Treinta días consecutivos |
 
-El caso menciona tarifas diferenciales para otros perfiles, pero no proporciona sus valores. Por eso, los cálculos de este laboratorio utilizan las tarifas del perfil general.
+El caso menciona tarifas diferenciales, pero no suministra sus valores, por lo que nuestros cálculos utilizan exclusivamente el perfil general. Suponemos que los pases pueden empezar en cualquier día del periodo; si su cobertura termina después del último día evaluado, los días sobrantes no generan costo adicional en esta liquidación. Si un día no tiene viajes, podemos avanzar sin comprar nada. Trabajamos con cantidades enteras en COP y conservamos la lista original.
 
-La operación debe entregar:
+### 1.3. Operación 3 — Detección de las franjas de congestión
 
-1. **Costo mínimo:** valor más bajo que cubre todos los viajes del periodo.
-2. **Devolución:** diferencia positiva entre lo cobrado y ese costo mínimo.
+Como segunda operación escogimos la **detección de franjas de congestión**. Planeación necesita identificar, para cada estación, el tramo de intervalos consecutivos de cinco minutos cuya **suma de saldos netos de pasajeros sea la mayor**. Esta información ayuda a determinar cuándo y dónde sería conveniente reforzar la frecuencia de los trenes.
+
+En cada intervalo se calcula:
 
 ```text
-Devolución = max(0, cobrado - costo_mínimo)
+Saldo neto = pasajeros que ingresaron - pasajeros evacuados por los trenes
 ```
 
-#### Restricciones y volumen del caso
+Un valor positivo indica que ingresaron más pasajeros de los que fueron evacuados; un valor negativo, que salieron más de los que entraron. La suma de un tramo representa su **cambio neto acumulado**, no la ocupación total de la plataforma.
 
-- Todos los viajes válidos deben quedar cubiertos y ninguna validación duplicada debe cobrarse dos veces.
-- La devolución debe ser **exacta**, sin beneficiar de más ni perjudicar al usuario.
-- El proceso debe conservar la trazabilidad y no modificar los registros originales.
-- Los pases semanales y mensuales cubren días **consecutivos**.
-- El SITVM tiene aproximadamente **3.200.000 tarjetas emitidas** y unas **950.000 se utilizan al menos una vez al mes**.
-- En un día hábil típico se reciben cerca de **1.400.000 validaciones** y entre el **4 % y el 9 %** pueden llegar repetidas.
-- El servidor es único, no utiliza procesamiento paralelo y consume aproximadamente **500 W** bajo carga sostenida.
-- La operación 4 comparte, durante el cierre mensual, la ventana de cuatro horas con las operaciones 1 y 2.
+El programa actual evalúa todos los tramos posibles. Según el caso, tarda varios minutos por estación con un mes de información y no termina en un tiempo útil para el histórico de dos años, de aproximadamente **166.000 intervalos por estación**. El enunciado no muestra el código interno; por eso calculamos la complejidad de la **implementación exhaustiva que construimos**, sin afirmar que conocemos exactamente la del programa real.
 
-Las cifras de validaciones y duplicados describen el proceso general. Nuestra función de tope tarifario recibe los **viajes diarios de una tarjeta ya depurados**, no todos los registros originales.
+**Entrada:** una lista cronológica de enteros `saldos` para una estación. El tamaño `n` es el número de intervalos de cinco minutos. Por ejemplo:
 
-Como referencia energética del proceso completo, si el servidor mantuviera una potencia de 500 W durante más de ocho horas, consumiría **más de 4 kWh** en ese periodo. Esta es una estimación para **todo el proceso nocturno**; no podemos atribuirla únicamente a la operación 4.
+```python
+saldos = [3, -2, 5, -1, 4, -6, 2, -1]
+```
 
-#### Supuestos de interpretación
+En el ejemplo `n = 8`. **Salida:** una tupla `(suma_maxima, inicio, fin)` que contiene la mayor suma y las posiciones inicial y final, ambas incluidas, usando índices desde cero.
 
-Para mantener las mismas reglas en la explicación, el código y las pruebas, trabajamos con estos supuestos:
+Las restricciones y decisiones que aplicamos son:
 
-- Los viajes se presentan en orden cronológico. Un mes real puede tener 28, 29, 30 o 31 días.
-- La cantidad de viajes de un día es un entero no negativo.
-- Si no hay viajes en un día, avanzamos al siguiente sin comprar ningún producto.
-- Un pase semanal o mensual puede comenzar en cualquier día del periodo. Si termina después del último día evaluado, no añadimos cobros por los días que sobren.
-- Los precios y las devoluciones se calculan con valores enteros en pesos.
-- Si dos combinaciones cuestan lo mismo, ambas son óptimas; el programa conserva la primera que encuentra con ese costo.
-- Para las pruebas tomamos como entrada los viajes válidos, sin duplicados cobrables.
-- La regla simplificada del SITVM no está definida con todos sus detalles. Por eso documentamos una **interpretación reproducible** para comparar algoritmos, sin afirmar que conocemos el programa real del sistema.
+- Encontrar el **máximo exacto**, no una aproximación, sobre un tramo **consecutivo y no vacío**.
+- Considerar valores positivos, negativos y ceros. Si todos son negativos, se devuelve el intervalo menos negativo.
+- Recibir listas con `n >= 1` y **no modificar la entrada**.
+- Resolver una estación por llamada; para otras estaciones se repite la función.
+- **Criterio de desempate del equipo:** ante sumas iguales, escoger el inicio más pequeño; si también coincide, el final más pequeño. El caso no establece una regla específica para empates, pero necesitamos una para comparar las dos soluciones.
 
-### 1.2. Diseño de la solución: programación dinámica
+Usamos una **lista** para conservar el orden temporal y una **tupla de tres enteros** para que los dos algoritmos entreguen el mismo formato de resultado.
 
-#### ¿Por qué escogimos esta estrategia?
+---
 
-Escogimos **programación dinámica** porque una compra puede cubrir varios días y afectar las decisiones siguientes. Si compramos un pase semanal desde el día 2, quedan cubiertos los días 2 al 8 y la siguiente decisión comienza en el día 9.
+## 2. Diseño de la solución
 
-Existe **subestructura óptima** porque, después de una compra, los días que faltan también deben cubrirse al menor costo posible. Además, hay **subproblemas repetidos**: diferentes combinaciones pueden llevar al mismo día pendiente. La programación dinámica guarda esos resultados para no calcularlos nuevamente.
+### 2.1. Operación 4 — Programación dinámica, búsqueda exhaustiva y regla simplificada
 
-#### Estado, recurrencia y caso base
+Escogimos **programación dinámica** como estrategia principal. La compra de un pase semanal o mensual cubre varios días y afecta las decisiones posteriores; por eso no siempre es correcto escoger la opción que parece más conveniente en el primer día.
 
-Definimos `C(t)` como el costo mínimo para cubrir los viajes desde el día `t` hasta el final de un periodo de `d` días. La respuesta es `C(1)`.
+Existe **subestructura óptima** porque, una vez escogida una compra, los días que faltan también deben cubrirse al menor costo posible. Además, hay **subproblemas repetidos** cuando diferentes combinaciones llevan al mismo día pendiente de pago. La programación dinámica calcula y guarda una vez cada resultado.
 
-Cuando hay viajes en el día `t`, comparamos tres posibilidades:
+Definimos `C(t)` como el menor costo de cubrir desde el día `t` hasta el final de un periodo de `d` días, usando días numerados desde 1. Si hay viajes el día `t`:
 
 ```text
 C(t) = min(
-    min(3900 × viajes[t], 9500) + C(t + 1),
+    min(3900 * viajes[t], 9500) + C(t + 1),
     36000 + C(min(t + 7, d + 1)),
     135000 + C(min(t + 30, d + 1))
 )
 ```
 
-- **Primera opción:** pagar únicamente el día actual con pasajes sencillos o un pase diario y continuar en el siguiente.
-- **Segunda opción:** comprar un pase semanal y continuar siete días después.
-- **Tercera opción:** comprar un pase mensual y continuar treinta días después.
+La primera opción paga solamente el día actual; la segunda compra un pase semanal; la tercera, un mensual. En Python el valor del día `t` se lee como `viajes_por_dia[t - 1]`. Si no hay viajes, `C(t) = C(t + 1)`; el **caso base** es `C(d + 1) = 0`. La tabla de costos se llena del **último día al primero**, porque cada decisión usa resultados de días posteriores. Guardamos también las decisiones para recuperar una combinación óptima de productos.
 
-En esta explicación numeramos los días desde 1. Como Python utiliza índices desde 0, el viaje del día `t` se consulta en `viajes_por_dia[t - 1]`.
+Para comprobar este enfoque implementamos una **búsqueda exhaustiva**, que considera las combinaciones sin reutilizar subproblemas. Además, construimos una **regla simplificada de comparación**: calcula el menor costo diario y, desde el primer día pendiente, considera un pase mensual si el total de hasta 30 días supera $135.000; si no, considera un pase semanal para hasta siete días cuando el total supera $36.000; de lo contrario paga solo el día. Esta es **nuestra interpretación reproducible** del enunciado, no una copia ni una verificación del software real del SITVM.
 
-Cuando no hay viajes, `C(t) = C(t + 1)`. El **caso base** es `C(d + 1) = 0`, porque ya no queda nada por pagar. Utilizamos `min(..., d + 1)` para no consultar estados fuera del periodo.
+#### Ejemplo de ocho días y contraejemplo de la regla simplificada
 
-La tabla se llena **desde el último día hasta el primero**, pues el costo de un día depende de los costos de los días posteriores. También guardamos qué compra dio el mínimo para recuperar los productos elegidos.
-
-### 1.3. Ejemplo de ocho días resuelto a mano
-
-Utilizamos una lista ficticia de ocho días para explicar el procedimiento, tal como pide el laboratorio:
+Tomamos una lista ficticia:
 
 ```python
 viajes_por_dia = [1, 3, 3, 3, 3, 0, 0, 3]
@@ -218,11 +208,9 @@ viajes_por_dia = [1, 3, 3, 3, 3, 0, 0, 3]
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Viajes | 1 | 3 | 3 | 3 | 3 | 0 | 0 | 3 |
 
-Para un día con **un viaje**, conviene pagar $3.900. Para uno con **tres viajes**, el pase diario cuesta $9.500 frente a los $11.700 de tres pasajes sencillos. Los días sin viajes no generan cobro.
+Con un viaje conviene pagar $3.900; con tres viajes el pase diario cuesta $9.500 frente a $11.700 en pasajes sencillos. Calculamos `C(9) = 0` y avanzamos hacia atrás:
 
-Comenzamos con `C(9) = 0` y calculamos hacia atrás:
-
-| Día | Viajes | Pagar hoy y continuar | Pase semanal y continuar | Pase mensual y continuar | Costo mínimo `C(t)` |
+| Día `t` | Viajes | Pagar hoy y continuar | Semanal y continuar | Mensual y continuar | `C(t)` |
 |---:|---:|---:|---:|---:|---:|
 | 9 | — | — | — | — | **$0** |
 | 8 | 3 | $9.500 | $36.000 | $135.000 | **$9.500** |
@@ -234,666 +222,113 @@ Comenzamos con `C(9) = 0` y calculamos hacia atrás:
 | 2 | 3 | $9.500 + $36.000 = $45.500 | $36.000 | $135.000 | **$36.000** |
 | 1 | 1 | $3.900 + $36.000 = $39.900 | $36.000 + $9.500 = $45.500 | $135.000 | **$39.900** |
 
-**Así llegamos al resultado:**
+La mejor combinación es **un pasaje sencillo el día 1 ($3.900)** y **un pase semanal desde el día 2 hasta el 8 ($36.000)**. El costo mínimo es **$39.900**. Si se hubieran cobrado individualmente los 16 viajes por $3.900, el cobro hipotético sería $62.400 y la devolución correcta sería **$22.500**.
 
-1. En el **día 8**, pagar ese día cuesta $9.500: `C(8) = 9500`.
-2. Los **días 7 y 6** no tienen viajes: `C(7) = C(6) = 9500`.
-3. En el **día 5**, pagar $9.500 y sumar lo pendiente da $19.000: `C(5) = 19000`.
-4. En el **día 4**, pagar ese día y lo pendiente da $28.500: `C(4) = 28500`.
-5. En el **día 3**, pagar solo ese día y continuar cuesta $38.000, pero un pase semanal cuesta $36.000: `C(3) = 36000`.
-6. En el **día 2**, el pase semanal de $36.000 cubre hasta el día 8 y resulta mejor que pagar hoy y continuar por $45.500: `C(2) = 36000`.
-7. En el **día 1**, el viaje sencillo más `C(2)` cuesta $39.900. El pase semanal desde el día 1 costaría $45.500 y el mensual $135.000.
+La regla simplificada compra el semanal desde el **día 1** porque los costos diarios de los días 1 a 7 suman $41.900, mayor que $36.000; debe pagar además $9.500 por los viajes del día 8. Obtiene **$45.500**, es decir, **$5.600 más** que el óptimo. Es un contraejemplo de nuestra regla interpretada y no una afirmación sobre el código real del SITVM.
 
-```text
-C(1) = min(39900, 45500, 135000) = 39900
-```
+Una regla voraz de escoger el menor costo de cada día sería suficiente **si no existieran pases que cubrieran varios días**. Con los pases semanales y mensuales, las decisiones interactúan y necesitamos considerar el periodo completo.
 
-La combinación óptima es:
+### 2.2. Operación 3 — Búsqueda exhaustiva y divide y vencerás
 
-| Día de compra | Producto | Días cubiertos | Precio |
-|---:|---|---|---:|
-| 1 | Un pasaje sencillo | Día 1 | $3.900 |
-| 2 | Un pase semanal | Días 2 al 8 | $36.000 |
-| | **Costo total** | | **$39.900** |
+Diseñamos dos soluciones exactas para `saldos`, con la misma salida `(suma_maxima, inicio, fin)`. La exhaustiva sirve como referencia y **divide y vencerás** es la propuesta de mejora. Ambas respetan los empates y no cambian la lista original.
 
-Para mostrar la devolución, supongamos que los 16 viajes de la lista se cobraron inicialmente a $3.900 cada uno:
-
-```text
-Cobrado = 16 × 3900 = 62400 pesos
-Costo mínimo = 39900 pesos
-Devolución = 62400 - 39900 = 22500 pesos
-```
-
-En ese **ejemplo hipotético**, corresponde devolver **$22.500**. No representa una tarjeta real del SITVM.
-
-### 1.4. Análisis comparativo: la regla actual y su contraejemplo
-
-#### Cómo interpretamos la regla simplificada
-
-El caso señala que la organización compara los pasajes sencillos con el pase diario y aplica pases semanales o mensuales cuando la suma supera su precio. No especifica cómo elige exactamente el día en que comienza cada pase.
-
-Para poder hacer la comparación, definimos una regla concreta:
-
-1. Calculamos para cada día el menor precio entre pasajes sencillos y pase diario.
-2. Desde el primer día con viajes sin cubrir, sumamos los costos individuales de los próximos **30 días**. Si superan $135.000, compramos un pase mensual desde ese día.
-3. Si no se aplica el mensual, revisamos los próximos **7 días**. Si su suma supera $36.000, compramos un pase semanal desde ese día.
-4. Si no conviene ninguno, pagamos solo el día actual.
-5. Saltamos los días que ya cubre un pase y continuamos hasta terminar el periodo.
-
-Utilizamos esta misma interpretación en [`regla_actual.py`](src/tope_tarifario/regla_actual.py), en las pruebas y en las mediciones. **No afirmamos que sea la implementación exacta del sistema real**.
-
-#### Contraejemplo calculado
-
-Para la misma lista de ocho días, el costo de pagar cada día por separado es:
-
-| Día | Viajes | Menor costo individual |
-|---:|---:|---:|
-| 1 | 1 | $3.900 |
-| 2 | 3 | $9.500 |
-| 3 | 3 | $9.500 |
-| 4 | 3 | $9.500 |
-| 5 | 3 | $9.500 |
-| 6 | 0 | $0 |
-| 7 | 0 | $0 |
-| 8 | 3 | $9.500 |
-| **Total** | **16** | **$51.400** |
-
-Al comenzar en el día 1, los costos individuales de los **días 1 al 7** suman $41.900. Como superan $36.000, nuestra regla compra un pase semanal **desde el día 1**. El día 8 queda fuera y requiere un pase diario de $9.500.
-
-| Estrategia | Compras | Costo |
-|---|---|---:|
-| Regla simplificada | Semanal desde el día 1 + diario del día 8 | $45.500 |
-| Programación dinámica | Sencillo del día 1 + semanal desde el día 2 | **$39.900** |
-| **Diferencia** | | **$5.600** |
-
-La regla simplificada compra el pase semanal demasiado pronto. La programación dinámica compara otras fechas de inicio y encuentra que comenzar ese pase en el día 2 permite ahorrar **$5.600**. Este es el contraejemplo que usamos en la Parte 2 para verificar el código.
-
-#### ¿Cuándo bastaría una estrategia voraz?
-
-Si solo existieran pasajes sencillos y pases diarios, sin pases que cubrieran varios días, podríamos elegir lo más barato **día por día**. La compra de hoy no afectaría el costo de mañana:
-
-```text
-Costo total = suma(min(3900 × viajes_del_día, 9500))
-```
-
-Esa decisión local sería suficiente. En el problema real, los pases semanales y mensuales relacionan varios días, por lo que necesitamos comparar alternativas antes de decidir.
-
----
-
-## Parte 2 — Implementar y verificar
-
-### 2.1. Organización de la implementación
-
-Desarrollamos los algoritmos en **Python**, dentro de `src/tope_tarifario/`, siguiendo las firmas solicitadas por el profesor. No utilizamos bibliotecas que resuelvan directamente el problema de optimización. Cada archivo tiene una responsabilidad diferente y así podemos probar las soluciones sin mezclarlas.
-
-| Archivo | Función dentro del proyecto |
-|---|---|
-| [`estrategia.py`](src/tope_tarifario/estrategia.py) | Encuentra el costo mínimo mediante programación dinámica y calcula la devolución. |
-| [`exhaustivo.py`](src/tope_tarifario/exhaustivo.py) | Busca el costo mínimo sin guardar subproblemas, como referencia exacta. |
-| [`regla_actual.py`](src/tope_tarifario/regla_actual.py) | Ejecuta nuestra interpretación de la regla simplificada. |
-| [`datos.py`](src/tope_tarifario/datos.py) | Genera listas sintéticas reproducibles de viajes. |
-| [`pruebas.py`](src/tope_tarifario/pruebas.py) | Comprueba resultados mediante `assert`. |
-| [`medicion.py`](src/tope_tarifario/medicion.py) | Mide tiempos y operaciones y crea las gráficas y el CSV. |
-
-### 2.2. `estrategia.py` — Programación dinámica
-
-Este es nuestro algoritmo principal. Recorre los días desde el final hacia el principio y guarda en una tabla el menor costo de cubrir los viajes pendientes. En cada día con viajes compara pagar ese día, comprar un pase semanal o comprar uno mensual. Así no repite cálculos que ya tiene guardados.
-
-Sus funciones principales son:
-
-- `costo_minimo(viajes_por_dia)`: devuelve el menor costo en pesos.
-- `liquidar_tope(viajes_por_dia, cobrado)`: devuelve la diferencia positiva entre el cobro real y el mínimo.
-- `compras_optimas(viajes_por_dia)`: recupera las compras de una combinación óptima.
-- `contar_operaciones(viajes_por_dia)`: cuenta las alternativas revisadas.
-
-Con nuestro ejemplo de ocho días, encuentra un sencillo de $3.900 y un semanal de $36.000, para un total de **$39.900**.
-
-### 2.3. `exhaustivo.py` — Búsqueda exhaustiva
-
-Implementamos una solución recursiva que explora las alternativas desde cada día pendiente y se queda con el menor costo encontrado. A diferencia de la programación dinámica, **no guarda los resultados anteriores**, así que puede repetir muchas veces los mismos cálculos.
-
-- `costo_exhaustivo(viajes_por_dia)`: devuelve el menor costo después de explorar las posibilidades.
-- `contar_operaciones(viajes_por_dia)`: cuenta las alternativas exploradas, incluidas las repetidas.
-
-Nos sirve como una **referencia exacta** para comprobar que la programación dinámica llega al mismo resultado. En el ejemplo manual, las dos devuelven **$39.900**. Solo ejecutamos la exhaustiva con periodos cortos porque crece rápidamente.
-
-### 2.4. `regla_actual.py` — Regla simplificada
-
-Aquí programamos el procedimiento que definimos en los supuestos: primero calculamos el menor costo individual por día, revisamos si conviene un pase mensual, luego uno semanal y, si ninguno cumple la condición, pagamos el día actual.
-
-- `costo_regla_actual(viajes_por_dia)`: devuelve el cobro según esa regla.
-- `contar_operaciones(viajes_por_dia)`: cuenta las revisiones realizadas.
-- `_resolver(viajes_por_dia)`: función auxiliar que calcula el costo y el conteo.
-
-Con la lista de ocho días, esta regla obtiene **$45.500**, frente a los **$39.900** de programación dinámica. La utilizamos para mostrar que una solución rápida no siempre garantiza el cobro correcto.
-
-### 2.5. `datos.py` — Generación de datos sintéticos
-
-Como no contamos con registros reales de tarjetas, usamos la biblioteca `random` para crear listas de viajes. La función `generar_viajes()` recibe el número de días, una semilla, el máximo de viajes diarios y la probabilidad de obtener un día sin viajes.
-
-La semilla predeterminada es **2026**, por lo que podemos repetir una prueba con los mismos parámetros y obtener la misma lista.
-
-```python
-from datos import generar_viajes
-
-viajes = generar_viajes(
-    dias=8,
-    semilla=2026,
-    max_viajes=5,
-    probabilidad_cero=0.05,
-)
-print(viajes)
-```
-
-Este ejemplo se puede ejecutar desde `src/tope_tarifario/` o dentro de un programa que importe el módulo. Los datos creados son **sintéticos**; no representan usuarios reales.
-
-### 2.6. `pruebas.py` — Verificación de resultados
-
-Utilizamos `assert` para comprobar que los resultados coincidan con lo esperado. Verificamos la lista vacía, días sin viajes, un día con uno o varios viajes, meses de 30 y 31 días, la devolución exacta y que las funciones no cambien la lista original.
-
-También probamos la lista que resolvimos a mano:
-
-```python
-ejemplo = [1, 3, 3, 3, 3, 0, 0, 3]
-
-assert costo_minimo(ejemplo) == 39900
-assert costo_exhaustivo(ejemplo) == 39900
-assert costo_regla_actual(ejemplo) == 45500
-assert liquidar_tope(ejemplo, 62400) == 22500
-```
-
-Además, generamos **30 instancias aleatorias pequeñas**, con semillas fijas y entre 1 y 10 días. En cada una comparamos el costo de programación dinámica y el de búsqueda exhaustiva; también comprobamos que la regla simplificada no quede por debajo del mínimo y que la devolución sea correcta.
-
-El programa se ejecuta con:
-
-```powershell
-python src/tope_tarifario/pruebas.py
-```
-
-La ejecución realizada devolvió el mensaje:
-
-```text
-Pruebas correctas: casos límite, ejemplo y 30 instancias aleatorias.
-```
-
-### 2.7. `medicion.py` — Preparación de los experimentos
-
-Este archivo llama a **los algoritmos anteriores**; no vuelve a programar sus soluciones. Con `perf_counter()` mide cuánto tarda cada uno y utiliza los contadores para registrar las operaciones. Genera las instancias antes de comenzar a cronometrar y utiliza la misma entrada para cada algoritmo que se compare.
-
-Las funciones principales son `repeticiones_para()`, `medir_tiempo()`, `medir()`, `guardar_csv()`, `guardar_grafica()` y `main()`.
-
-Los datos de las mediciones y las gráficas se presentan a continuación, en la Parte 3.
-
----
-
-## Parte 3 — Medir y graficar
-
-### 3.1. Cómo realizamos los experimentos
-
-Ejecutamos los tres algoritmos con **datos sintéticos**, usando la semilla `2026` y viajes en todos los días de cada instancia. Esto permite observar cómo crece el trabajo cuando aumenta el número de días con viajes.
-
-Para medir, generamos una sola lista por tamaño y la compartimos entre los algoritmos. Cronometramos **únicamente la función**, mediante `time.perf_counter()`, y calculamos el promedio de varias ejecuciones. El conteo de operaciones se hace fuera del cronómetro.
-
-- **Tamaños pequeños:** 4, 8, 12, 16, 24, 28, 30, 31 y 32 días. Aquí comparamos programación dinámica, búsqueda exhaustiva y regla simplificada.
-- **Tamaños grandes:** 64, 128, 256, 512, 1.024, 4.096 y 16.384 días. Aquí solo ejecutamos programación dinámica y regla simplificada.
-
-Incluimos parejas donde el tamaño se duplica, como **4–8**, **8–16** y **16–32**. No utilizamos búsqueda exhaustiva con entradas grandes para evitar mediciones excesivamente largas.
-
-**Los tamaños superiores a 31 días son pruebas de escalabilidad, no meses reales del SITVM.** Las cantidades de operaciones representan el trabajo que definimos en los contadores de nuestros programas, no instrucciones de procesador.
-
-Los datos completos están en [`resultados.csv`](graficas/tope_tarifario/resultados.csv).
-
-### 3.2. Gráfica de tiempo de ejecución
-
-![Tiempo medio de ejecución de los tres algoritmos](graficas/tope_tarifario/tiempo_vs_n.png)
-
-La gráfica muestra que la programación dinámica mantiene un crecimiento mucho más controlado que la búsqueda exhaustiva. La regla simplificada también es rápida, aunque en algunos casos no encuentra el costo mínimo.
-
-Estos son algunos tiempos medidos en el computador donde ejecutamos los experimentos, convertidos a **milisegundos**:
-
-| Días | Programación dinámica (ms) | Búsqueda exhaustiva (ms) | Regla simplificada (ms) |
-|---:|---:|---:|---:|
-| 8 | 0,0135 | 0,0152 | 0,0074 |
-| 16 | 0,0271 | 0,0913 | 0,0168 |
-| 24 | 0,0372 | 0,6045 | 0,0117 |
-| 32 | 0,0559 | 3,6968 | 0,0187 |
-
-### 3.3. Gráfica de operaciones
-
-![Operaciones contabilizadas por cada algoritmo](graficas/tope_tarifario/operaciones_vs_n.png)
-
-Esta gráfica permite comparar el crecimiento del trabajo sin depender únicamente del tiempo del computador.
-
-Por ejemplo, con **16 días**, la programación dinámica contabiliza **48 operaciones** y la exhaustiva **195**. Con **32 días**, registran **96** y **7.671**, respectivamente. En la búsqueda exhaustiva se repiten muchas exploraciones, mientras que la programación dinámica reutiliza los resultados guardados.
-
-Ambas gráficas tienen título, ejes rotulados y leyenda. Utilizan **escalas logarítmicas** para que podamos visualizar datos muy diferentes en una misma figura.
-
-### 3.4. Verificación de costos durante las mediciones
-
-Dentro del propio experimento comprobamos con `assert` que la programación dinámica y la exhaustiva obtuvieran el mismo valor óptimo para los **nueve tamaños pequeños**. Las verificaciones terminaron correctamente.
-
-La regla simplificada produjo un costo superior al mínimo en algunas instancias:
-
-| Días | Costo mínimo (COP) | Regla simplificada (COP) | Cobro adicional (COP) |
-|---:|---:|---:|---:|
-| 16 | $79.800 | $91.000 | **$11.200** |
-| 24 | $119.700 | $135.000 | **$15.300** |
-| 128 | $579.900 | $583.800 | **$3.900** |
-| 256 | $1.158.900 | $1.215.000 | **$56.100** |
-
-Las entradas de 128 y 256 días son experimentos sintéticos de crecimiento, no meses reales. Estos resultados muestran que una regla más rápida puede producir un cobro mayor que el mínimo que exige el caso.
-
----
-
-## Parte 4 — Análisis de los resultados
-
-### 4.1. Diseño de la solución: recurrencia y orden de cálculo
-
-La recurrencia de la programación dinámica, la explicación de sus tres opciones, el caso base `C(d + 1) = 0` y el llenado de la tabla de atrás hacia adelante están desarrollados en **[la Parte 1, apartado 1.2](#12-diseño-de-la-solución-programación-dinámica)**. Los aplicamos al ejemplo completo del **[apartado 1.3](#13-ejemplo-de-ocho-días-resuelto-a-mano)**.
-
-### 4.2. Evaluación del desempeño: complejidad temporal y espacial
-
-Llamamos `d` a la cantidad de días y `a` a la cantidad de días con viajes.
-
-| Algoritmo | Complejidad temporal | Complejidad espacial | Explicación |
-|---|---|---|---|
-| Programación dinámica | **Θ(d)** | **Θ(d)** | Recorre los días una vez, compara hasta tres alternativas y guarda costos y decisiones. |
-| Búsqueda exhaustiva | **Exponencial en el peor caso**, cuando crecen los días con viajes | **O(d)** | Explora las combinaciones recursivamente sin guardar resultados; utiliza la pila de llamadas. |
-| Regla simplificada | **Θ(d)** | **Θ(d)** | Recorre los días y revisa ventanas de hasta 7 o 30 días, longitudes fijas, y guarda costos diarios. |
-
-La programación dinámica tiene un costo lineal porque para cada día hace un número fijo de comparaciones. La búsqueda exhaustiva puede tomar distintas decisiones desde el mismo día muchas veces; por eso su trabajo aumenta rápidamente cuando hay viajes en todos o casi todos los días. La regla simplificada también tiene crecimiento lineal, pero **no garantiza** el mínimo exacto.
-
-### 4.3. Evaluación del desempeño: lo medido frente a lo esperado
-
-Para contrastar teoría y práctica tomamos los tamaños **16 y 32 días**, porque el segundo es el doble del primero. Ambas entradas tenían viajes todos los días.
-
-| Algoritmo | Tiempo con 16 días | Tiempo con 32 días | Factor de tiempo | Operaciones 16 → 32 | Factor de operaciones |
-|---|---:|---:|---:|---:|---:|
-| Programación dinámica | 0,0271 ms | 0,0559 ms | **2,07×** | 48 → 96 | **2,00×** |
-| Búsqueda exhaustiva | 0,0913 ms | 3,6968 ms | **40,49×** | 195 → 7.671 | **39,34×** |
-| Regla simplificada | 0,0168 ms | 0,0187 ms | **1,11×** | 73 → 76 | **1,04×** |
-
-Dividimos el resultado de 32 días entre el de 16. Por ejemplo, en programación dinámica `96 / 48 = 2`; en exhaustiva `7671 / 195 ≈ 39,34`.
-
-La programación dinámica se comportó como esperábamos para una estrategia lineal: al duplicar los días, sus operaciones se duplicaron y el tiempo aumentó unas dos veces. La búsqueda exhaustiva creció mucho más, de acuerdo con su comportamiento exponencial.
-
-La regla simplificada aumentó poco en esta pareja porque puede comprar pases que cubren varios días y saltarse parte de las decisiones. **Eso no significa que su complejidad sea constante**: con otras listas de viajes debe revisar más días y ventanas.
-
-Los tiempos de entradas pequeñas pueden variar por el entorno de ejecución de Python. Por eso utilizamos también los contadores y las gráficas, en lugar de basarnos en una única medición.
-
-### 4.4. Evaluación del desempeño: escala real y ventana nocturna
-
-El caso informa que alrededor de **950.000 tarjetas** se usan al menos una vez al mes. Como escenario exigente de estimación, suponemos que se liquidan las 950.000, que el periodo tiene **31 días** y que todas registran viajes cada día. Esto es una **hipótesis de cálculo**; no conocemos el número exacto de tarjetas personalizadas ni su frecuencia real de uso.
-
-Cada tarjeta se procesa por separado y el servidor del caso no utiliza paralelismo. Por eso, manteniendo **fijos los 31 días por tarjeta**, estimamos el total multiplicando el tiempo medio medido para 31 días por la cantidad de tarjetas:
-
-```text
-Tiempo estimado del cierre = tiempo medido por tarjeta × 950000
-```
-
-| Algoritmo | Tiempo medio medido por tarjeta (31 días) | Tiempo estimado para 950.000 tarjetas |
-|---|---:|---:|
-| Programación dinámica | 0,0511 ms | **48,56 segundos** |
-| Regla simplificada | 0,0155 ms | **14,74 segundos** |
-| Búsqueda exhaustiva | 2,9197 ms | **2.773,74 segundos (46,23 minutos)** |
-
-Este cálculo **no supone que la búsqueda exhaustiva crezca linealmente con el número de días**. Solo suma muchas tarjetas con el mismo tamaño de periodo. En cambio, si aumentaran los días con viajes dentro de cada tarjeta, la búsqueda exhaustiva podría crecer de manera exponencial.
-
-La ventana de cierre es de **cuatro horas (00:00–04:00)**. En esta estimación aislada, las tres alternativas cabrían por separado para el escenario supuesto de 31 días. Sin embargo, **no podemos afirmar que todo el proceso nocturno cumpla la ventana**, porque faltan los tiempos de las operaciones 1 y 2, la lectura y escritura de registros, la integración y las diferencias de hardware. Las más de ocho horas actuales corresponden al proceso completo, no a una medición de nuestra función.
-
-Para ver el riesgo del enfoque exhaustivo, consideramos un periodo sintético de **64 días con viajes todos los días**, que no representa un mes real. En el algoritmo recursivo, el conteo teórico cumple, para días con viajes:
-
-```text
-N(d) = 3 + N(d - 1) + N(d - 7) + N(d - 30)
-```
-
-Tomando `N(d) = 0` cuando `d ≤ 0`, el conteo pasa de **7.671 alternativas en 32 días** a aproximadamente **11.300.145 en 64 días**. Si extrapolamos el tiempo mediante la proporción de operaciones observada a 32 días, serían cerca de **5,45 segundos por tarjeta**, y unas **60 jornadas completas** de cómputo para 950.000 tarjetas. Esta última cifra **no es una medición**: solamente ilustra cómo el crecimiento exponencial puede volver inviable la búsqueda exhaustiva en periodos más largos.
-
-### 4.5. Implicaciones éticas, sociales y ambientales
-
-#### Consumo energético
-
-El caso indica que el servidor consume aproximadamente **500 W**, es decir, **0,5 kW** bajo carga sostenida. Estimamos la energía de una ejecución mediante:
-
-```text
-Energía (kWh) = Potencia (kW) × Tiempo (horas)
-```
-
-Con los tiempos estimados para **950.000 tarjetas de 31 días**, obtenemos:
-
-| Algoritmo | Tiempo por cierre | Energía estimada por cierre | Energía estimada en 12 cierres |
-|---|---:|---:|---:|
-| Programación dinámica | 48,56 s | **0,00674 kWh** | **0,08093 kWh/año** |
-| Regla simplificada | 14,74 s | **0,00205 kWh** | **0,02457 kWh/año** |
-| Búsqueda exhaustiva | 46,23 min | **0,38524 kWh** | **4,62291 kWh/año** |
-
-Para programación dinámica, por ejemplo:
-
-```text
-0,5 × (48,56 / 3600) ≈ 0,00674 kWh por cierre
-```
-
-La diferencia anual estimada entre la regla simplificada y la programación dinámica es:
-
-```text
-(0,08093 - 0,02457) ≈ 0,05635 kWh/año
-```
-
-Con estas mediciones **no podemos decir que la programación dinámica ahorre energía frente a la regla simplificada**: en nuestro escenario utiliza aproximadamente **0,05635 kWh más al año**. La recomendamos por la exactitud del resultado. Frente a la búsqueda exhaustiva, la programación dinámica representa una reducción estimada de aproximadamente **4,54 kWh al año**.
-
-Estas cifras se calculan a partir de tiempos medidos en nuestro computador y una potencia supuesta constante de 500 W. **No son lecturas del servidor real** y no incluyen el consumo en reposo, las otras operaciones ni las tareas de entrada y salida.
-
-#### Consecuencias para los usuarios
-
-Un cobro duplicado o una liquidación incorrecta afecta directamente el saldo disponible para viajar. El caso advierte que muchos usuarios frecuentes y personas con tarifa diferencial cuentan con menores ingresos. Por eso, para este problema, **la exactitud es tan importante como el tiempo**: un algoritmo rápido que cobra de más no cumple la condición del negocio.
-
-También importa el momento de acreditar la devolución. Si el proceso termina tarde, la persona no recibe oportunamente el saldo que le corresponde. Para reducir ese riesgo, planteamos comprobar resultados con una solución exacta en casos pequeños, conservar registros de las decisiones y no modificar las validaciones originales.
-
-#### Datos personales, normas y buenas prácticas
-
-Las validaciones de una tarjeta personalizada pueden mostrar desplazamientos y hábitos de una persona. Por esa razón, el tratamiento de sus datos debe considerar los principios de finalidad, seguridad, acceso restringido y calidad de la información contemplados en la **[Ley 1581 de 2012](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981)** sobre protección de datos personales.
-
-Además, la **[Ley 336 de 1996](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=346)** establece el marco general del transporte público en Colombia. En el contexto del ejercicio, esto refuerza la necesidad de tratar los cobros y las devoluciones como decisiones que deben poder explicarse y revisarse.
-
-Como medidas de diseño, proponemos utilizar **datos sintéticos en las pruebas públicas**, limitar el acceso a los datos reales cuando exista una implementación de producción, conservar las validaciones originales y poder reproducir los cálculos ante una reclamación. Nuestro programa académico no implementa por sí solo todo un sistema de protección de datos ni sustituye una revisión jurídica de una solución real.
-
-#### Crecimiento futuro del sistema
-
-El caso plantea una posible tercera línea de cable y un crecimiento del **30 % en las validaciones diarias**. Esto aumentaría la carga del proceso general, especialmente de deduplicación y ordenamiento, que no desarrollamos en este laboratorio.
-
-Para la operación 4, la programación dinámica mantiene un trabajo proporcional al número de días por tarjeta. Si también aumentara **30 % la cantidad de tarjetas que se deben liquidar**, manteniendo constantes las demás condiciones, el tiempo total estimado crecería aproximadamente en esa misma proporción. No suponemos que un 30 % más de validaciones implique necesariamente un 30 % más de tarjetas.
-
-### 4.6. Análisis comparativo y recomendación
-
-**Recomendamos la programación dinámica** para liquidar el tope tarifario del SITVM porque encuentra el costo mínimo exacto, evita repetir subproblemas y crece de forma controlada con los días del periodo.
-
-En las pruebas pequeñas dio el mismo resultado que la búsqueda exhaustiva, pero utilizó muchas menos operaciones cuando aumentó la entrada. La regla simplificada fue **más rápida** en algunas mediciones, incluyendo la de 31 días; sin embargo, **no garantiza el menor cobro**. En nuestro contraejemplo, cobró $45.500 frente a los $39.900 de la programación dinámica, una diferencia de $5.600.
-
-La ganancia principal sería **liquidar y devolver correctamente**, no superar la velocidad de la regla simplificada. Frente al método exhaustivo, además, la programación dinámica evita que el tiempo crezca de forma explosiva cuando se acumulan días con viajes.
-
-Antes de utilizar una versión real habría que validar las tarifas diferenciales, confirmar la interpretación de los pases y medir la solución integrada con las demás operaciones del cierre nocturno. También sería necesario comprobar el rendimiento en el servidor de la organización, porque nuestros tiempos corresponden a un experimento académico con datos sintéticos.
-
----
-
-## Conclusiones
-
-Al desarrollar la operación de tope tarifario pudimos comprobar que no siempre basta con escoger el pase que parece más barato en un momento. Un pase semanal comprado un día antes puede dejar viajes por fuera y aumentar el costo total.
-
-La **programación dinámica** nos permitió resolver ese problema de forma exacta. La **búsqueda exhaustiva** nos ayudó a verificar los resultados, aunque su crecimiento la hace poco conveniente para entradas grandes. La **regla simplificada** realizó menos trabajo en algunas pruebas, pero puede generar cobros superiores al mínimo.
-
-Las mediciones y las gráficas respaldan el comportamiento esperado de los algoritmos. También nos mostraron que para recomendar una solución debemos considerar no solo cuánto tarda, sino **si cumple la restricción principal del negocio**: devolver exactamente lo que corresponde a cada usuario.
-
-Este análisis cubre la **operación 4 del Laboratorio 4**. El proyecto final deberá integrar otra operación del Caso 1 y completar la evaluación conjunta del proceso nocturno.
-
-## Referencias
-
-- ITM, *Evaluación de Resultados de Aprendizaje 2026-2 — Análisis de Algoritmos*, Caso de estudio 1: conciliación nocturna del recaudo del sistema integrado de transporte; actividades, entregables y rúbrica suministrados para la asignatura.
-- Guía del Laboratorio 4 — Operación 4: liquidación del tope tarifario y requisitos de modelado, implementación, verificación y medición.
-- [Código y mediciones del Grupo 10](https://github.com/jfcadavid/Proyecto-Final-Analisis-Algoritmos).
-- [Ley 1581 de 2012, protección de datos personales — Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981).
-- [Ley 336 de 1996, Estatuto Nacional de Transporte — Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=346).
-
----
-
-# Proyecto Final — Análisis de Algoritmos
-
-## 1. Análisis del problema
-
-### Operación 3 — Detección de las franjas de congestión
-
-#### Descripción del problema
-
-Como segunda operación del Caso 1 del SITVM escogimos la *detección de las franjas de congestión. El área de Planeación necesita encontrar, para cada estación, el tramo de intervalos consecutivos de cinco minutos que tenga la **mayor suma de saldos netos de pasajeros*. Esta información ayuda a identificar los periodos en los que podría ser necesario reforzar la frecuencia de los trenes.
-
-En cada intervalo se calcula el saldo neto de la plataforma:
-
-text
-Saldo neto = pasajeros que ingresaron - pasajeros evacuados por los trenes
-
-
-Un valor positivo significa que entraron más personas de las que fueron evacuadas; un valor negativo significa que ocurrió lo contrario. Un valor de cero indica que ambas cantidades fueron iguales.
-
-*Buscamos la suma más alta de un tramo consecutivo*, no simplemente el mayor valor de un intervalo aislado. Esa suma representa el cambio neto acumulado durante el tramo; por sí sola no indica la cantidad total de personas que había en la plataforma.
-
-#### Situación actual y tamaño del problema
-
-Según el caso, el programa actual evalúa todos los tramos posibles de la serie. Con datos de un mes tarda varios minutos por estación, y con el histórico de dos años, de aproximadamente *166.000 intervalos por estación*, no termina en un tiempo útil.
-
-El SITVM cuenta con *80 estaciones de metro y cable*, por lo que interesa encontrar una solución que pueda aplicarse a cada estación sin perder exactitud.
-
-El enunciado no explica cómo calcula internamente cada suma el programa actual. Por eso no le asignamos una complejidad exacta a ese código que desconocemos; sí podremos calcular la complejidad de la búsqueda exhaustiva que implementaremos como referencia.
-
-#### Entradas, salidas y estructuras de datos
-
-*Entrada:* una lista de enteros saldos, ordenada cronológicamente, donde cada elemento representa el saldo neto de un intervalo de cinco minutos de *una estación*. El tamaño de entrada n es la cantidad de intervalos de esa lista.
-
-python
-saldos = [3, -2, 5, -1, 4, -6, 2, -1]
-
-
-En este ejemplo, n = 8. Para una serie histórica de dos años, el caso indica aproximadamente n = 166000 por estación.
-
-*Salida:* una tupla con tres enteros:
-
-python
-(suma_maxima, inicio, fin)
-
-
-- suma_maxima: mayor suma obtenida entre todos los tramos consecutivos no vacíos.
-- inicio: posición del primer intervalo del tramo elegido.
-- fin: posición del último intervalo del tramo elegido.
-
-Las posiciones comienzan en *0*, como los índices de las listas de Python, e incluyen ambos extremos.
-
-Elegimos una lista para conservar el orden temporal y una tupla para devolver el resultado de manera idéntica en los dos algoritmos.
-
-#### Restricciones y supuestos
-
-- La solución debe encontrar el *máximo exacto*, no una aproximación.
-- Solo se permiten *tramos consecutivos* y con al menos un intervalo.
-- Se deben considerar valores positivos, negativos y ceros. Si todos son negativos, el resultado será el intervalo con el valor menos negativo.
-- La entrada debe tener al menos un elemento (n >= 1). Esta será una precondición común de las dos funciones.
-- No modificaremos la lista original. Trabajaremos con la serie de saldos, sin alterar las validaciones del sistema.
-- Resolveremos una estación por ejecución de la función; el proceso podrá repetirla para las demás estaciones.
-- *Desempate acordado por el equipo:* si dos tramos tienen la misma suma, escogemos el que *empieza primero; si también tienen el mismo inicio, el que **termina primero*.
-
-El caso exige la suma máxima, pero no define cómo resolver estos empates. El criterio nos permitirá comparar exactamente las salidas de ambas implementaciones.
-
-## 2. Diseño de la solución
-
-### Operación 3 — Estrategias para detectar franjas de congestión
-
-Diseñamos dos algoritmos que reciben la misma lista `saldos` y devuelven `(suma_maxima, inicio, fin)`: **búsqueda exhaustiva**, para tener una referencia exacta, y **divide y vencerás**, como propuesta de mejora.
-
-Los dos trabajan con una lista no vacía y buscan tramos consecutivos no vacíos, sin modificar la entrada. Las posiciones comienzan en cero y ambos extremos del tramo están incluidos. En caso de empate en la suma, se prefiere el inicio más pequeño y, si también coincide, el final más pequeño.
-
-#### Criterio común para comparar resultados
-
-Usaremos la misma regla al comparar dos soluciones candidatas:
+Primero acordamos cómo comparar dos candidatos:
 
 ```text
 FUNCIÓN es_mejor(candidata, actual):
-
-    SI candidata.suma > actual.suma:
-        RETORNAR VERDADERO
-
-    SI candidata.suma < actual.suma:
-        RETORNAR FALSO
-
-    SI candidata.inicio < actual.inicio:
-        RETORNAR VERDADERO
-
-    SI candidata.inicio > actual.inicio:
-        RETORNAR FALSO
-
+    SI candidata.suma > actual.suma: RETORNAR VERDADERO
+    SI candidata.suma < actual.suma: RETORNAR FALSO
+    SI candidata.inicio < actual.inicio: RETORNAR VERDADERO
+    SI candidata.inicio > actual.inicio: RETORNAR FALSO
     RETORNAR candidata.fin < actual.fin
 ```
 
-Así, cuando varias sumas son iguales, los dos programas elegirán el mismo tramo.
+#### Búsqueda exhaustiva
 
-#### Estrategia 1 — Búsqueda exhaustiva
-
-La primera estrategia revisa **todos los tramos consecutivos posibles**.
-
-Para cada posición inicial comienza con una suma de cero y agrega los valores siguientes uno por uno. Después de cada suma comprueba si encontró un tramo mejor.
-
-La ventaja de ir acumulando es que no necesitamos volver a sumar desde cero los elementos de cada tramo: reutilizamos la suma que llevamos desde el mismo inicio.
-
-**Pseudocódigo:**
+Recorremos cada posible posición inicial y sumamos progresivamente los valores siguientes. La suma acumulada evita recalcular desde cero el mismo prefijo de cada tramo. Al revisar todos los tramos no vacíos, encontramos el máximo exacto.
 
 ```text
 FUNCIÓN tramo_maximo_exhaustivo(saldos):
-
-    n = longitud(saldos)   // Se supone n >= 1
+    n = longitud(saldos)        // n >= 1
     mejor = (saldos[0], 0, 0)
 
     PARA inicio DESDE 0 HASTA n - 1:
-
         suma = 0
-
         PARA fin DESDE inicio HASTA n - 1:
-
             suma = suma + saldos[fin]
             candidata = (suma, inicio, fin)
-
             SI es_mejor(candidata, mejor):
                 mejor = candidata
 
     RETORNAR mejor
 ```
 
-Esta estrategia encuentra la solución exacta porque evalúa cada tramo no vacío.
+Evaluamos exactamente `n(n + 1) / 2` tramos. Esperamos **tiempo Θ(n²)** y **espacio auxiliar Θ(1)**, sin contar la lista de entrada.
 
-Tiene dos ciclos anidados y revisa `n(n + 1) / 2` tramos, por lo que esperamos **tiempo Θ(n²)**.
+#### Divide y vencerás
 
-Como solo mantiene la suma y algunas posiciones, requiere **espacio auxiliar Θ(1)**.
-
-Estas complejidades corresponden a **nuestra implementación propuesta**, no a una inspección del código real del SITVM.
-
-#### Estrategia 2 — Divide y vencerás
-
-La segunda estrategia parte de una observación: si dividimos una serie en dos mitades, su mejor tramo debe estar en una de estas tres situaciones:
-
-1. Completamente en la mitad izquierda.
-2. Completamente en la mitad derecha.
-3. Cruzando el centro, con al menos un elemento de cada mitad.
-
-Buscamos el mejor tramo de cada tipo y escogemos el ganador con `es_mejor`.
-
-Para las dos mitades repetimos el mismo procedimiento hasta llegar al **caso base** de un solo elemento.
-
-Así obtenemos el máximo exacto sin recorrer todos los tramos mediante dos ciclos anidados.
-
-**Pseudocódigo de la división:**
+Dividimos la serie en dos mitades. El tramo máximo solo puede estar **completamente a la izquierda**, **completamente a la derecha** o **cruzar el centro**. Resolvemos recursivamente las primeras dos posibilidades y calculamos la tercera buscando el mejor sufijo izquierdo y el mejor prefijo derecho. Después elegimos la opción ganadora con el criterio de desempate.
 
 ```text
 FUNCIÓN tramo_maximo_divide_venceras(saldos):
-
-    n = longitud(saldos)   // Se supone n >= 1
-
-    RETORNAR resolver(saldos, 0, n - 1)
-
+    RETORNAR resolver(saldos, 0, longitud(saldos) - 1)
 
 FUNCIÓN resolver(saldos, inicio, fin):
-
     SI inicio == fin:
         RETORNAR (saldos[inicio], inicio, fin)
 
     centro = (inicio + fin) // 2
-
-    izquierda = resolver(
-        saldos, inicio, centro
-    )
-
-    derecha = resolver(
-        saldos, centro + 1, fin
-    )
-
-    cruce = mejor_cruce(
-        saldos, inicio, centro, fin
-    )
+    izquierda = resolver(saldos, inicio, centro)
+    derecha = resolver(saldos, centro + 1, fin)
+    cruce = mejor_cruce(saldos, inicio, centro, fin)
 
     mejor = izquierda
-
-    SI es_mejor(derecha, mejor):
-        mejor = derecha
-
-    SI es_mejor(cruce, mejor):
-        mejor = cruce
-
+    SI es_mejor(derecha, mejor): mejor = derecha
+    SI es_mejor(cruce, mejor): mejor = cruce
     RETORNAR mejor
 ```
 
-**Pseudocódigo para encontrar el mejor tramo que cruza el centro:**
+Para calcular el mejor cruce, partimos de sumas `-infinito`, de modo que funcionen también las listas con valores negativos:
 
 ```text
 FUNCIÓN mejor_cruce(saldos, inicio, centro, fin):
-
-    // Mejor tramo que termina en el centro.
     suma = 0
     mejor_izquierda = -infinito
     inicio_cruce = centro
 
-    PARA i DESDE centro HASTA inicio,
-    RETROCEDIENDO:
-
+    PARA i DESDE centro HASTA inicio, RETROCEDIENDO:
         suma = suma + saldos[i]
-
         SI suma > mejor_izquierda O
-           (suma == mejor_izquierda Y
-            i < inicio_cruce):
-
+           (suma == mejor_izquierda Y i < inicio_cruce):
             mejor_izquierda = suma
             inicio_cruce = i
 
-    // Mejor tramo que comienza en centro + 1.
     suma = 0
     mejor_derecha = -infinito
     fin_cruce = centro + 1
 
     PARA j DESDE centro + 1 HASTA fin:
-
         suma = suma + saldos[j]
-
         SI suma > mejor_derecha:
             mejor_derecha = suma
             fin_cruce = j
 
-    RETORNAR (
-        mejor_izquierda + mejor_derecha,
-        inicio_cruce,
-        fin_cruce
-    )
+    RETORNAR (mejor_izquierda + mejor_derecha,
+              inicio_cruce, fin_cruce)
 ```
 
-Al recorrer la izquierda hacia atrás, en caso de empate preferimos el inicio más pequeño. Al recorrer la derecha hacia adelante conservamos el primer final que alcanza la mejor suma.
-
-Esto mantiene el criterio de desempate común.
-
-Inicializamos las mejores sumas en `-infinito` para que también funcione cuando todos los valores sean negativos.
-
-En cada llamada dividimos el problema en dos partes y usamos tiempo lineal para calcular el mejor cruce.
-
-Su recurrencia es:
-
-```text
-T(n) = 2T(n/2) + Θ(n)
-```
-
-Para tamaños que se dividen exactamente por la mitad, de ahí esperamos **tiempo Θ(n log n)**.
-
-Si usamos **índices y no copiamos sublistas**, la profundidad de la recursividad requiere **espacio auxiliar Θ(log n)**.
+Cuando las sumas son iguales, en la izquierda preferimos el inicio más pequeño y en la derecha conservamos el primer final que obtuvo la mejor suma. El caso base es un segmento de un solo elemento. La recurrencia `T(n) = 2T(n/2) + Θ(n)` conduce a **tiempo Θ(n log n)** y, usando índices sin copiar sublistas, **espacio auxiliar Θ(log n)** por la pila recursiva.
 
 #### Ejemplo manual de ocho intervalos
 
-Para comprobar el diseño utilizamos estos datos ficticios de una estación, con intervalos de cinco minutos:
+Usamos esta lista ficticia de una estación:
 
 ```python
 saldos = [3, -2, 5, -1, 4, -6, 2, -1]
 ```
 
 | Intervalo | Posición en Python | Saldo neto |
-|---|---:|---:|
+|---:|---:|---:|
 | 1 | 0 | +3 |
 | 2 | 1 | -2 |
 | 3 | 2 | +5 |
@@ -903,11 +338,9 @@ saldos = [3, -2, 5, -1, 4, -6, 2, -1]
 | 7 | 6 | +2 |
 | 8 | 7 | -1 |
 
-**Comprobación con búsqueda exhaustiva**
+Para verificar la búsqueda exhaustiva, fijamos cada inicio y obtenemos su mejor final:
 
-La tabla muestra el mejor tramo que encontramos al fijar cada intervalo de inicio y acumular los valores siguientes:
-
-| Intervalo inicial | Mejor intervalo final | Suma máxima desde ese inicio |
+| Inicio | Mejor final | Mayor suma desde ese inicio |
 |---:|---:|---:|
 | 1 | 5 | **9** |
 | 2 | 5 | 6 |
@@ -918,73 +351,54 @@ La tabla muestra el mejor tramo que encontramos al fijar cada intervalo de inici
 | 7 | 7 | 2 |
 | 8 | 8 | -1 |
 
-**Comprobación con divide y vencerás**
+Con divide y vencerás dividimos entre las posiciones 3 y 4. El mejor tramo de la izquierda es `3 - 2 + 5 = 6` (posiciones 0–2); el mejor de la derecha es `4` (posición 4). El mejor cruce usa el sufijo izquierdo `3 - 2 + 5 - 1 = 5` y el prefijo derecho `4`: suma **9** entre las posiciones **0 y 4**. Como `9 > 6` y `9 > 4`, ambos algoritmos devuelven **`(9, 0, 4)`**.
 
-Primero dividimos la lista entre las posiciones 3 y 4:
+Ese tramo corresponde a **cinco intervalos de cinco minutos (25 minutos)**. El valor 9 representa la suma neta de esos intervalos, no necesariamente nueve personas presentes en toda la plataforma.
 
-```text
-Mitad izquierda (0 a 3): [3, -2, 5, -1]
+---
 
-Mitad derecha   (4 a 7): [4, -6, 2, -1]
-```
+## 3. Implementación
 
-- **Mejor tramo de la izquierda:** posiciones 0 a 2, con suma `3 - 2 + 5 = 6`.
-- **Mejor tramo de la derecha:** posición 4, con suma `4`.
-- **Mejor tramo que cruza el centro:** el mayor sufijo de la izquierda es `3 - 2 + 5 - 1 = 5` (posiciones 0 a 3); el mayor prefijo de la derecha es `4` (posición 4). Su suma es `5 + 4 = 9`, desde la posición 0 hasta la 4.
+### 3.1. Tecnologías y decisiones de implementación
 
-Al comparar `6`, `4` y `9`, el mayor es **9**.
+Implementamos las estrategias en **Python**, con funciones de responsabilidad específica, anotaciones de tipos y documentación. Utilizamos `random` para los datos sintéticos, `time.perf_counter()` para las mediciones, `csv` para guardar resultados y `matplotlib` para las gráficas. No utilizamos bases de datos, interfaces ni procesamiento paralelo, tal como permite el enunciado.
 
-Por lo tanto, ambas estrategias deben devolver:
+El código de las dos operaciones está separado para evitar confundir datos de viajes diarios con saldos de pasajeros por intervalos. Las listas originales no se modifican; las funciones devuelven resultados nuevos y, para medir, utilizamos las mismas entradas por tamaño en los algoritmos que se comparan.
 
-```python
-(9, 0, 4)
-```
+### 3.2. Archivos de la operación 4
 
-El tramo va del **intervalo 1 al 5**, dura **25 minutos** y tiene un saldo neto acumulado de **9**.
-
-Este valor no representa necesariamente nueve personas en total en la plataforma, sino la suma de los cambios netos de esos intervalos.
-
-#### Comparación teórica inicial
-
-| Aspecto | Búsqueda exhaustiva | Divide y vencerás |
-|---|---|---|
-| Resultado | Máximo exacto | Máximo exacto |
-| Método | Revisar todos los tramos con suma acumulada | Resolver mitades y el mejor tramo que cruza el centro |
-| Tiempo esperado | `Θ(n²)` | `Θ(n log n)` |
-| Espacio auxiliar esperado | `Θ(1)` | `Θ(log n)` |
-| Principal limitación | El trabajo crece rápidamente | Requiere recursividad y combinar correctamente los resultados |
-
-Por ahora estas son **complejidades justificadas a partir del diseño**, no resultados de medición.
-
-Cuando implementemos las dos estrategias en Python, comprobaremos que entreguen los mismos resultados y compararemos sus tiempos y operaciones con datos sintéticos de tamaños crecientes.
-
-Con esas mediciones podremos estimar el comportamiento para los aproximadamente 166.000 intervalos por estación y el consumo energético del servidor indicado en el caso.
-
-### Operación 3 — Pruebas de correctitud
-
-Para verificar la detección de franjas de congestión, creamos el archivo [`src/congestion/pruebas.py`](src/congestion/pruebas.py). El objetivo es comprobar que la búsqueda exhaustiva y divide y vencerás encuentren exactamente la misma suma máxima y las mismas posiciones de inicio y fin.
-
-Utilizamos `assert` para comparar los resultados y comprobar las restricciones que definimos en el diseño. Organizamos las pruebas de la siguiente manera:
-
-| Prueba | Qué verificamos |
+| Archivo | Responsabilidad |
 |---|---|
-| 16 casos con resultado conocido | El ejemplo de ocho intervalos, un elemento, valores negativos, ceros, empates y tramos en diferentes posiciones. |
-| 300 instancias aleatorias | Que los dos algoritmos obtengan el mismo resultado con listas de 1 a 32 intervalos. |
-| Validez de la respuesta | Que los índices estén dentro de la lista y que la suma coincida con el tramo devuelto. |
-| Conservación de los datos | Que los algoritmos y sus contadores no modifiquen la lista original. |
-| Conteo de tramos | Que la búsqueda exhaustiva examine `n(n + 1) / 2` tramos. |
-| Generación de datos | Que la semilla `2026` permita repetir los datos y que se respeten los límites configurados. |
-| Entradas inválidas | Que las funciones rechacen listas vacías y que el generador rechace tamaños y límites inválidos. |
+| [`estrategia.py`](src/tope_tarifario/estrategia.py) | Programación dinámica, costo mínimo, compras óptimas y devolución exacta. |
+| [`exhaustivo.py`](src/tope_tarifario/exhaustivo.py) | Buscar todas las combinaciones para verificar casos pequeños. |
+| [`regla_actual.py`](src/tope_tarifario/regla_actual.py) | Simular la regla simplificada interpretada. |
+| [`datos.py`](src/tope_tarifario/datos.py) | Generar cantidades de viajes por día con semilla fija. |
+| [`pruebas.py`](src/tope_tarifario/pruebas.py) | Verificar costos, devoluciones, meses de 30–31 días y 30 casos aleatorios. |
+| [`medicion.py`](src/tope_tarifario/medicion.py) | Medir tiempos y operaciones; generar CSV y gráficas. |
 
-En las pruebas aleatorias utilizamos la función `generar_saldos()` del archivo `datos.py`, con saldos entre `-20` y `20`. La semilla fija permite repetir exactamente las instancias. En esas pruebas no conocemos de antemano el tramo óptimo de cada lista, por lo que comparamos ambas estrategias exactas; los casos definidos a mano sirven además para verificar resultados esperados específicos.
+La función `costo_minimo()` devuelve el costo más bajo; `liquidar_tope()` calcula la devolución sin permitir valores negativos. Para el ejemplo de ocho días, las funciones exactas devuelven **$39.900** y la regla simplificada **$45.500**.
 
-Para ejecutar las pruebas desde la carpeta principal del proyecto usamos:
+### 3.3. Archivos de la operación 3
 
-```powershell
-python src/congestion/pruebas.py
-```
+| Archivo | Responsabilidad |
+|---|---|
+| [`exhaustivo.py`](src/congestion/exhaustivo.py) | Buscar todos los tramos consecutivos y contar los examinados. |
+| [`divide_venceras.py`](src/congestion/divide_venceras.py) | Resolver recursivamente las mitades y el mejor cruce. |
+| [`datos.py`](src/congestion/datos.py) | Generar saldos netos sintéticos reproducibles. |
+| [`pruebas.py`](src/congestion/pruebas.py) | Comprobar resultados exactos, empates, negativos, datos originales y errores de entrada. |
+| [`medicion.py`](src/congestion/medicion.py) | Registrar tiempos y contadores; guardar CSV, PNG y resumen automático. |
 
-En la ejecución de verificación obtuvimos el siguiente resumen:
+Ambas funciones principales de congestión devuelven la tupla `(suma_maxima, inicio, fin)`. Sus contadores de operaciones se ejecutan **fuera del cronómetro**: representan trabajos definidos en cada implementación y sirven principalmente para analizar su crecimiento.
+
+---
+
+## 4. Evaluación del desempeño
+
+### 4.1. Pruebas de correctitud
+
+En la operación 4 ejecutamos casos límite, el ejemplo resuelto a mano, verificaciones de devolución y **30 instancias aleatorias** pequeñas. Comprobamos que la programación dinámica y la búsqueda exhaustiva obtienen el mismo mínimo y que el cálculo no altera los datos originales.
+
+En la operación 3 las pruebas del equipo dieron el siguiente resultado:
 
 ```text
 Pruebas correctas de la operación 3 — Congestión del SITVM
@@ -994,6 +408,215 @@ Comprobaciones adicionales: generador y entradas inválidas
 Resultado: ambos algoritmos coinciden y conservan las entradas.
 ```
 
-Por ejemplo, con la lista `saldos = [3, -2, 5, -1, 4, -6, 2, -1]`, los dos algoritmos devuelven `(9, 0, 4)`, como calculamos a mano en el diseño.
+Los **16 casos definidos** incluyen valores positivos, negativos, ceros, empates, segmentos de un elemento y el ejemplo de ocho intervalos. Las **300 instancias aleatorias**, reproducibles con semilla fija, comparan las dos estrategias exactas en listas de 1 a 32 intervalos. También verificamos que los índices devueltos estén dentro de la lista, que la suma coincida con el tramo y que ninguna función modifique la entrada. En los tamaños compartidos de las mediciones, los dos algoritmos también devolvieron la misma suma máxima y los mismos límites.
 
-Estas pruebas aportan evidencia de correctitud para los casos evaluados, pero no reemplazan una demostración matemática para todas las entradas posibles. Los tiempos de ejecución y las gráficas comparativas corresponden a la siguiente etapa del proyecto.
+Estas pruebas son evidencia sobre los casos ejecutados; no sustituyen por sí solas una demostración matemática para todas las entradas.
+
+### 4.2. Complejidad temporal y espacial
+
+| Operación | Estrategia | Tiempo | Espacio auxiliar | Motivo |
+|---|---|---|---|---|
+| Tope tarifario | Programación dinámica | **Θ(d)** | **Θ(d)** | Evalúa un número fijo de decisiones por día y guarda una tabla. |
+| Tope tarifario | Exhaustiva | **Exponencial en el peor caso** | **O(d)** | Explora combinaciones recursivas sin memorizar subproblemas. |
+| Tope tarifario | Regla simplificada | **Θ(d)** | **Θ(d)** | Revisa días y ventanas de 7 o 30 días, de longitud fija. |
+| Congestión | Exhaustiva con suma acumulada | **Θ(n²)** | **Θ(1)** | Examina `n(n+1)/2` tramos. |
+| Congestión | Divide y vencerás | **Θ(n log n)** | **Θ(log n)** | Divide en mitades y calcula el mejor cruce en tiempo lineal. |
+
+Aquí `d` es el número de días del periodo y `n` el número de intervalos de cinco minutos. Las complejidades describen **los algoritmos que implementamos**, no una inspección del programa interno del SITVM.
+
+### 4.3. Metodología de medición
+
+Para la operación 4 usamos la semilla `2026`, entradas sintéticas con viajes en todos los días y tamaños de **4, 8, 12, 16, 24, 28, 30, 31 y 32 días**, además de tamaños de escalabilidad de **64 a 16.384 días**. La búsqueda exhaustiva solo se midió hasta 32 días. Registramos el **tiempo medio de varias ejecuciones**, los contadores y los costos encontrados. Los periodos superiores a 31 días son exclusivamente pruebas de escalabilidad: no representan meses reales.
+
+Para congestión generamos listas sintéticas con saldos entre **−50 y 50**, semilla `2026`. Medimos **los tiempos medianos** de varias repeticiones, desde **8 hasta 2.048 intervalos** con los dos algoritmos y hasta **166.000** con divide y vencerás. Generación de datos, comprobaciones y contadores quedaron fuera del intervalo cronometrado. No debemos mezclar estas medianas con los promedios del experimento de tope tarifario.
+
+Los registros completos están disponibles en [`graficas/tope_tarifario/resultados.csv`](graficas/tope_tarifario/resultados.csv) y [`graficas/congestion/resultados.csv`](graficas/congestion/resultados.csv).
+
+### 4.4. Resultados de la operación 4: medido frente a lo esperado
+
+Al duplicar la entrada de **16 a 32 días** obtuvimos:
+
+| Estrategia | Tiempo 16 días | Tiempo 32 días | Factor de tiempo | Operaciones 16 → 32 | Factor de operaciones |
+|---|---:|---:|---:|---:|---:|
+| Programación dinámica | 0,0271 ms | 0,0559 ms | **2,07×** | 48 → 96 | **2,00×** |
+| Búsqueda exhaustiva | 0,0913 ms | 3,6968 ms | **40,49×** | 195 → 7.671 | **39,34×** |
+| Regla simplificada | 0,0168 ms | 0,0187 ms | **1,11×** | 73 → 76 | **1,04×** |
+
+La programación dinámica duplicó aproximadamente el trabajo, como esperamos de `Θ(d)`. La búsqueda exhaustiva aumentó mucho más, coherente con su crecimiento exponencial. La regla simplificada saltó varios días cubiertos por pases, por eso el cambio observado fue pequeño; **eso no significa que su complejidad sea constante**.
+
+Las soluciones exactas coincidieron en los nueve tamaños pequeños. En cambio, la regla simplificada produjo costos superiores al mínimo en algunas entradas sintéticas:
+
+| Días | Costo mínimo | Regla simplificada | Diferencia |
+|---:|---:|---:|---:|
+| 16 | $79.800 | $91.000 | **$11.200** |
+| 24 | $119.700 | $135.000 | **$15.300** |
+| 128 | $579.900 | $583.800 | **$3.900** |
+| 256 | $1.158.900 | $1.215.000 | **$56.100** |
+
+Los tamaños de 128 y 256 días no corresponden a meses reales. En todos los casos, la regla comparada es nuestra interpretación reproducible, no el código de producción del SITVM.
+
+### 4.5. Resultados de la operación 3: medido frente a lo esperado
+
+Al duplicar la entrada de **1.024 a 2.048 intervalos** encontramos:
+
+| Algoritmo | 1.024 intervalos | 2.048 intervalos | Factor de tiempo | Operaciones 1.024 → 2.048 | Factor de operaciones |
+|---|---:|---:|---:|---:|---:|
+| Búsqueda exhaustiva | 161,7441 ms | 704,1544 ms | **4,35×** | 524.800 → 2.098.176 | **4,00×** |
+| Divide y vencerás | 3,0982 ms | 3,6426 ms | **1,18×** | 13.310 → 28.670 | **2,15×** |
+
+La exhaustiva examinó cuatro veces más tramos al duplicar los intervalos, como corresponde a `Θ(n²)`. Divide y vencerás registró cerca de **2,15 veces** más trabajo, coherente con `Θ(n log n)`. Su tiempo mediano solo aumentó **1,18 veces** en esta pareja; las mediciones de pocos milisegundos pueden variar por el intérprete de Python, el sistema operativo y la carga del computador. Por eso consideramos tanto el tiempo como las operaciones instrumentadas. Los contadores de los dos métodos no miden exactamente el mismo tipo de operación, así que comparamos su **crecimiento dentro de cada método**, no sus cifras absolutas como si fueran instrucciones equivalentes.
+
+Para **166.000 intervalos**, ejecutamos divide y vencerás y medimos **0,405722 segundos por estación**. No ejecutamos exhaustiva con ese tamaño: calculamos su tiempo estimado a partir de la medición de 2.048 intervalos y la relación entre las cantidades de tramos `n(n+1)/2`.
+
+### 4.6. Escala operativa, limitaciones de las estimaciones y energía
+
+**Tope tarifario.** Para explorar un escenario exigente suponemos **950.000 tarjetas**, todas con viajes en **31 días**. Al tratar cada tarjeta secuencialmente, multiplicamos el tiempo medio medido por tarjeta por 950.000. Esto suma tarjetas con el mismo tamaño de entrada; **no equivale a suponer que la exhaustiva crece linealmente con el número de días**.
+
+| Estrategia | Tiempo medido por tarjeta | Tiempo estimado para 950.000 tarjetas |
+|---|---:|---:|
+| Programación dinámica | 0,0511 ms | **48,56 s** |
+| Regla simplificada | 0,0155 ms | **14,74 s** |
+| Exhaustiva | 2,9197 ms | **2.773,74 s (46,23 min)** |
+
+En esa simulación aislada las tres alternativas cabrían en cuatro horas, pero **no podemos afirmar que el proceso nocturno completo cumpla la ventana**: faltan operaciones 1 y 2, lectura y escritura de registros, integración y validación en el servidor real. Tampoco sabemos cuántas de las 950.000 tarjetas son personalizadas ni la distribución real de los días con viajes. Si aumentan los días activos, la búsqueda exhaustiva se vuelve rápidamente inviable por su crecimiento exponencial.
+
+**Congestión.** Para el histórico de dos años utilizamos **166.000 intervalos por estación** y **80 estaciones**, procesadas secuencialmente. La tabla distingue lo medido de lo estimado:
+
+| Estrategia | Tiempo por estación | Tiempo para 80 estaciones | Energía para 80 estaciones (500 W) |
+|---|---:|---:|---:|
+| Búsqueda exhaustiva | **4.623,97 s, estimado** | **102,75 h, estimado** | **51,3774 kWh, estimado** |
+| Divide y vencerás | **0,405722 s, medido** | **32,46 s, estimado** | **0,004508 kWh, estimado** |
+
+La exhaustiva demoraría alrededor de **4,28 días** por análisis histórico completo de las 80 estaciones en este escenario extrapolado, mientras que divide y vencerás permitiría calcularlo en segundos. Son resultados de un modelo basado en nuestro computador; no tenemos mediciones del servidor del SITVM. La operación 3 **no tiene una ventana obligatoria de cuatro horas especificada en el caso**; podemos usarla solamente como referencia comparativa.
+
+La relación energética es:
+
+```text
+Potencia estimada = 500 W = 0,5 kW
+Energía (kWh) = 0,5 kW × tiempo (horas)
+```
+
+Para **tope tarifario**, la energía del escenario de 950.000 tarjetas sería aproximadamente **0,00674 kWh** con programación dinámica, **0,00205 kWh** con la regla simplificada y **0,38524 kWh** con exhaustiva por cierre mensual. Si fueran **12 cierres al año**, resultarían aproximadamente **0,08093**, **0,02457** y **4,62291 kWh/año**, respectivamente. Con nuestros tiempos, la programación dinámica gastaría alrededor de **0,05635 kWh/año más que la regla simplificada**. No afirmamos, por tanto, que ahorre energía respecto de esa regla: la recomendamos porque **garantiza el cobro exacto**. Frente a exhaustiva, sí tendría un consumo estimado mucho menor.
+
+Para **congestión**, la diferencia estimada por análisis histórico completo es de **51,3729 kWh** a favor de divide y vencerás. Si se repitiera **12 veces al año** (hipótesis que **no informa** el cliente), sería una diferencia de aproximadamente **616,4749 kWh/año**. Sin conocer la frecuencia real de estos análisis no existe una cifra anual definitiva. Las estimaciones no incluyen consumo en reposo, lectura de archivos ni otros procesos del servidor.
+
+---
+
+### 4.7. Evidencia gráfica e interpretación
+
+Las siguientes gráficas fueron generadas con los scripts de medición del repositorio. Los ejes usan **escala logarítmica** para mostrar tamaños y tiempos muy diferentes. Las rutas relativas están escritas para que GitHub las muestre desde este `README.md` ubicado en la **raíz del proyecto**.
+
+#### Gráficas de la operación 4 — Tope tarifario
+
+**Tiempo de ejecución**
+
+![Tiempo medio de los algoritmos de tope tarifario](graficas/tope_tarifario/tiempo_vs_n.png)
+
+En esta figura, la búsqueda exhaustiva crece mucho más rápido a medida que aumentan los días con viajes. La programación dinámica aumenta de forma más controlada y, al duplicar los días de 16 a 32, su tiempo pasó de **0,0271 a 0,0559 ms**. La regla simplificada es rápida, pero su velocidad no garantiza el mínimo exacto.
+
+**Operaciones contabilizadas**
+
+![Operaciones de los algoritmos de tope tarifario](graficas/tope_tarifario/operaciones_vs_n.png)
+
+Los contadores muestran que programación dinámica pasó de **48 a 96 operaciones** entre 16 y 32 días, mientras exhaustiva pasó de **195 a 7.671**. Esta diferencia ayuda a entender por qué conviene guardar los resultados de subproblemas repetidos. Los contadores no equivalen directamente a instrucciones ejecutadas por el procesador.
+
+#### Gráficas de la operación 3 — Congestión
+
+**Tiempo de ejecución**
+
+![Tiempo de búsqueda exhaustiva y divide y vencerás en congestión](graficas/congestion/tiempo_vs_n.png)
+
+La curva de búsqueda exhaustiva aumenta con mucha más pendiente. Entre **1.024 y 2.048 intervalos**, su tiempo mediano pasó de **161,7441 a 704,1544 ms**, un factor aproximado de **4,35**. Divide y vencerás pasó de **3,0982 a 3,6426 ms** en esa pareja; el factor temporal fue **1,18**, aunque el conteo instrumental aumentó aproximadamente **2,15** veces. Para la entrada grande de **166.000 intervalos**, únicamente medimos divide y vencerás (**0,405722 s**).
+
+**Operaciones contabilizadas**
+
+![Operaciones de búsqueda exhaustiva y divide y vencerás en congestión](graficas/congestion/operaciones_vs_n.png)
+
+El método exhaustivo pasó de **524.800 a 2.098.176 tramos evaluados** cuando duplicamos `n` de 1.024 a 2.048: casi cuatro veces más. Divide y vencerás pasó de **13.310 a 28.670 operaciones instrumentadas**, mucho menos crecimiento. El resultado concuerda con las complejidades `Θ(n²)` y `Θ(n log n)`. No comparamos directamente las cantidades absolutas de ambas curvas porque sus contadores registran tipos distintos de trabajo.
+
+---
+
+## 5. Análisis comparativo y recomendaciones
+
+### 5.1. Liquidación del tope tarifario
+
+Recomendamos **programación dinámica** porque encuentra la combinación de menor costo y evita recalcular subproblemas. La búsqueda exhaustiva también es exacta, pero su crecimiento es poco conveniente para tarjetas con muchos días activos. La regla simplificada fue más rápida en algunas mediciones, incluida la de 31 días, pero puede cobrar por encima del mínimo; nuestro ejemplo manual mostró una diferencia de **$5.600**.
+
+La ganancia principal para el SITVM no sería superar siempre a la regla simplificada en velocidad, sino **reducir errores de liquidación y calcular devoluciones exactas**. Antes de llevar el algoritmo a producción habría que validar los perfiles diferenciales, la cobertura real de los pases y su integración con las demás operaciones.
+
+### 5.2. Detección de franjas de congestión
+
+Recomendamos **divide y vencerás** para analizar las series históricas de las estaciones. Ambos métodos encuentran el máximo exacto, pero el exhaustivo examina un número cuadrático de tramos y divide y vencerás crece aproximadamente como `n log n`. Las pruebas de correctitud y los experimentos respaldan la selección. El algoritmo requiere implementar correctamente el cruce y los desempates, que ya verificamos con los casos de prueba.
+
+Como mejora futura podría estudiarse otra solución exacta de **tiempo lineal** para el subarreglo máximo y compararla experimentalmente. No la incluimos como una tercera implementación en esta entrega, por lo que no le atribuimos resultados medidos.
+
+### 5.3. Límites de la recomendación conjunta
+
+Nuestra propuesta mejora dos operaciones, **no sustituye el proceso completo**. Deduplicación y ordenamiento siguen siendo críticas para cumplir la ventana nocturna; por tanto, no podemos prometer que el SITVM reduzca sus más de ocho horas a menos de cuatro basándonos únicamente en nuestros dos módulos. La implementación productiva debe medirse con cargas representativas, trazabilidad y el hardware de la organización.
+
+---
+
+## 6. Implicaciones éticas, sociales y ambientales
+
+### 6.1. Consecuencias para los usuarios y la operación
+
+Un cobro duplicado o un tope mal liquidado afecta directamente al usuario que paga el transporte. El caso advierte que las personas que viajan con mayor frecuencia y quienes tienen tarifas diferenciales pueden encontrarse entre los grupos con menores ingresos; por eso, un error pequeño repetido puede tener consecuencias importantes. La organización debe corregir los cobros y acreditar oportunamente las devoluciones. Desde nuestro diseño ayudamos al exigir costos exactos, comprobar resultados contra un método exhaustivo en entradas pequeñas y conservar los datos originales para responder reclamaciones.
+
+En congestión, reportar un tramo incorrecto puede llevar a reforzar trenes en horarios que no corresponden o a no identificar una franja que necesita atención. Exigir el **máximo exacto** y verificar los límites del tramo ayuda a reducir esa posibilidad. El resultado es una herramienta para Planeación, no una decisión operativa automática que reemplace toda la información de la estación.
+
+### 6.2. Protección de datos y normas aplicables
+
+Los viajes de una tarjeta personalizada pueden revelar desplazamientos y hábitos. La **[Ley 1581 de 2012](https://normograma.mintic.gov.co/mintic/compilacion/docs/ley_1581_2012.htm)** establece principios para el tratamiento de datos personales, como finalidad, acceso restringido y seguridad. Por ello, en una implementación real limitaríamos los accesos, protegeríamos los identificadores, usaríamos los datos únicamente para la finalidad autorizada y conservaríamos controles de auditoría. En el repositorio académico solo usamos **datos sintéticos**, sin divulgar historiales de usuarios.
+
+La **[Ley 336 de 1996](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=346)** establece un marco general para el servicio público de transporte en Colombia. No la presentamos como una norma que defina las tarifas concretas del caso; los valores del ejercicio vienen del enunciado del profesor. Nuestro diseño busca que la liquidación respete esas reglas y pueda explicarse ante una reclamación. Para una aplicación real se requeriría comprobar la reglamentación tarifaria y de protección de datos específica del operador.
+
+Como buenas prácticas, proponemos preservar registros originales, documentar la versión de los algoritmos, registrar las decisiones relevantes y permitir repetir cálculos a partir de la información autorizada. Una ejecución académica correcta no equivale, por sí sola, a cumplir todos los requisitos de seguridad o normativa de un sistema de producción.
+
+### 6.3. Consumo energético y sostenibilidad
+
+El consumo calculado en la sección 4.6 muestra que **reducir el crecimiento computacional puede disminuir considerablemente el tiempo activo y la energía**. La mayor diferencia aparece en congestión: para un histórico largo, el método cuadrático sería mucho más costoso que divide y vencerás. En tope tarifario, programación dinámica ofrece una ventaja energética clara frente a exhaustiva, pero no frente a nuestra regla simplificada. Por eso la decisión no se basa solamente en kWh: también importa que el cobro sea correcto y no perjudique a los usuarios.
+
+Estas diferencias se estimaron con **500 W constantes durante el tiempo de cálculo**, no mediante un medidor de energía conectado al servidor. Sus valores deben entenderse junto con esas limitaciones.
+
+### 6.4. Posible crecimiento del 30 %
+
+El caso plantea una tercera línea de cable y **30 % más validaciones diarias**. Ese aumento afectaría especialmente la deduplicación y el ordenamiento del proceso completo. No significa automáticamente 30 % más tarjetas, 30 % más estaciones ni 30 % más intervalos de cinco minutos.
+
+Si, como escenario separado, aumentara 30 % la cantidad de tarjetas que liquidamos y se mantuvieran los mismos días por tarjeta, el tiempo agregado de programación dinámica crecería aproximadamente **1,3 veces**, al procesar tarjetas independientes. Si aumentara 30 % el número de intervalos por estación, la exhaustiva crecería cerca de **1,3² = 1,69 veces**, mientras que divide y vencerás crecería según `1,3 × log₂(1,3n) / log₂(n)`, un factor mucho menor. Este cálculo es condicional: no sustituye una medición para la nueva infraestructura.
+
+---
+
+## Referencias del caso y fuentes consultadas
+
+- Instituto Tecnológico Metropolitano (ITM). *Proyecto final — Análisis de Algoritmos*, Caso 1: recaudo del transporte; enunciado, actividades y rúbrica suministrados para el curso 2026-2.
+- Grupo 10. [Repositorio del proyecto, código y resultados de los experimentos](https://github.com/jfcadavid/Proyecto-Final-Analisis-Algoritmos).
+- Congreso de Colombia. [Ley 1581 de 2012: disposiciones generales para la protección de datos personales](https://normograma.mintic.gov.co/mintic/compilacion/docs/ley_1581_2012.htm).
+- Congreso de Colombia. [Ley 336 de 1996: Estatuto Nacional de Transporte](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=346).
+
+## Reproducción de los experimentos
+
+Los datos de los experimentos son **sintéticos** y se generan con semilla `2026`. No compartimos registros reales de tarjetas ni de estaciones. Los archivos `src/tope_tarifario/datos.py` y `src/congestion/datos.py` permiten reproducir las entradas. Para ejecutar nuevamente las pruebas y generar los CSV y las gráficas desde la carpeta principal del repositorio, utilizamos:
+
+```powershell
+python -m pip install -r requirements.txt
+python src/tope_tarifario/pruebas.py
+python src/congestion/pruebas.py
+python src/tope_tarifario/medicion.py
+python src/congestion/medicion.py
+```
+
+Estos comandos producen resultados en `graficas/tope_tarifario/` y `graficas/congestion/`. La semilla permite reproducir las **entradas**, pero los **tiempos de ejecución pueden variar** según el computador, la versión de Python y la carga del sistema. Por eso las cifras de este informe corresponden a las ejecuciones cuyos CSV acompañan el repositorio; si se repiten las mediciones, se deben actualizar las tablas y las gráficas del informe antes de entregarlo.
+
+---
+
+## 7. Conclusiones
+
+El desarrollo de las dos operaciones nos permitió comprobar que **un algoritmo no se elige solo porque termina rápido**, sino también porque cumple exactamente lo que necesita la organización. En el tope tarifario, una decisión local sobre cuándo comprar un pase puede dejar viajes sin cubrir y generar un costo mayor; la programación dinámica evita ese problema y calcula una devolución exacta.
+
+La búsqueda exhaustiva fue útil como referencia de correctitud en ambos problemas, pero vimos que su crecimiento puede volverla poco práctica. En el tope tarifario repite combinaciones de días y, en congestión, revisa todos los tramos posibles. Las pruebas y las gráficas nos ayudaron a relacionar ese comportamiento con las complejidades estudiadas en clase.
+
+Para las franjas de congestión, **divide y vencerás** mantuvo el resultado exacto con un crecimiento mucho más favorable. Las mediciones de nuestro computador y la extrapolación al histórico del SITVM sugieren una diferencia muy grande en tiempo y energía frente al recorrido exhaustivo, aunque una implementación real tendría que medirse en el servidor de la organización.
+
+También aprendimos que **eficiencia y corrección no siempre coinciden**: la regla simplificada de tope tarifario fue más rápida que programación dinámica en algunas pruebas, pero no garantiza el cobro mínimo. Por ello recomendamos **programación dinámica para la operación 4 y divide y vencerás para la operación 3**. Ambas soluciones deben integrarse con las otras operaciones, la protección de datos y los mecanismos de trazabilidad antes de considerarse listas para producción.
+
+Como trabajo futuro proponemos validar tarifas diferenciales, medir el proceso nocturno completo y estudiar alternativas exactas adicionales para congestión. La meta no es solo reducir recursos computacionales, sino entregar resultados confiables y oportunos para los usuarios y para Planeación.
